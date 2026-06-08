@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Solicitudes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #667eea;
+            font-size: 18px;
+            margin-top: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+        .campo {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 14px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .fila {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #5a67d8;
+        }
+        .btn-limpiar {
+            background: #48bb78;
+            margin-top: 10px;
+        }
+        .btn-limpiar:hover {
+            background: #38a169;
+        }
+        .mensaje {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+        }
+        .exito {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        .error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+        @media (max-width: 600px) {
+            .fila {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📋 Sistema de Gestión de Solicitudes</h1>
+    <p style="text-align: center; color: #666;">Complete el formulario y los datos se guardarán en su navegador</p>
+
+    <div id="mensaje" class="mensaje"></div>
+
+    <form id="formSolicitud">
+        <h2>📌 Información básica</h2>
+        <div class="fila">
+            <div class="campo">
+                <label>Solicitud ID:</label>
+                <input type="text" id="solicitud" placeholder="Ej: SOL-001">
+            </div>
+            <div class="campo">
+                <label>Persona que solicita:</label>
+                <input type="text" id="persona" placeholder="Nombre completo">
+            </div>
+        </div>
+
+        <div class="fila">
+            <div class="campo">
+                <label>Fecha de solicitud:</label>
+                <input type="date" id="fecha">
+            </div>
+            <div class="campo">
+                <label>Email:</label>
+                <input type="email" id="email" placeholder="correo@ejemplo.com">
+            </div>
+        </div>
+
+        <div class="campo">
+            <label>Explicación detallada de lo que se solicita:</label>
+            <textarea id="explicacion" placeholder="Describa con el mayor detalle posible..."></textarea>
+        </div>
+
+        <h2>💰 Información de transacción</h2>
+        <div class="fila">
+            <div class="campo">
+                <label>DOT:</label>
+                <input type="text" id="dot" placeholder="Número DOT">
+            </div>
+            <div class="campo">
+                <label>Número de caso:</label>
+                <input type="text" id="caso" placeholder="Número de caso">
+            </div>
+        </div>
+
+        <div class="fila">
+            <div class="campo">
+                <label>Tipo de transacción:</label>
+                <select id="tipoTransaccion">
+                    <option value="">Seleccione...</option>
+                    <option>Compra</option>
+                    <option>Reembolso</option>
+                    <option>Pago a proveedor</option>
+                    <option>Transferencia</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>Monto de la transacción:</label>
+                <input type="number" id="monto" step="0.01" placeholder="0.00">
+            </div>
+        </div>
+
+        <div class="fila">
+            <div class="campo">
+                <label>Fecha de transacción:</label>
+                <input type="date" id="fechaTransaccion">
+            </div>
+            <div class="campo">
+                <label>Departamento:</label>
+                <input type="text" id="departamento" placeholder="Departamento que solicita">
+            </div>
+        </div>
+
+        <h2>📎 Estado y seguimiento</h2>
+        <div class="fila">
+            <div class="campo">
+                <label>Estado (Status):</label>
+                <select id="status">
+                    <option>Pendiente</option>
+                    <option>En proceso</option>
+                    <option>Aprobado</option>
+                    <option>Rechazado</option>
+                    <option>Completado</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>Quien lo atiende:</label>
+                <input type="text" id="quienAtiende" placeholder="Responsable">
+            </div>
+        </div>
+
+        <div class="campo">
+            <label>Comentarios (COMMENTS):</label>
+            <textarea id="comentarios" placeholder="Observaciones adicionales..."></textarea>
+        </div>
+
+        <div class="campo">
+            <label>Subject de respuesta:</label>
+            <input type="text" id="subjectRespuesta" placeholder="Asunto para la respuesta">
+        </div>
+
+        <button type="button" onclick="guardarSolicitud()">💾 Guardar Solicitud</button>
+        <button type="button" class="btn-limpiar" onclick="limpiarFormulario()">🗑️ Limpiar Formulario</button>
+        <button type="button" class="btn-limpiar" onclick="verSolicitudes()" style="background: #ed8936;">📋 Ver Solicitudes Guardadas</button>
+        <button type="button" class="btn-limpiar" onclick="exportarExcel()" style="background: #38a169;">📊 Exportar a Excel</button>
+    </form>
+</div>
+
+<script>
+    // Función para mostrar mensajes
+    function mostrarMensaje(texto, tipo) {
+        const msgDiv = document.getElementById('mensaje');
+        msgDiv.textContent = texto;
+        msgDiv.className = `mensaje ${tipo}`;
+        msgDiv.style.display = 'block';
+        setTimeout(() => {
+            msgDiv.style.display = 'none';
+        }, 3000);
+    }
+
+    // Guardar solicitud
+    function guardarSolicitud() {
+        // Validar mínimo un campo importante
+        const persona = document.getElementById('persona').value;
+        const solicitud = document.getElementById('solicitud').value;
+        
+        if (!persona && !solicitud) {
+            mostrarMensaje('❌ Por favor, complete al menos "Persona que solicita" o "Solicitud ID"', 'error');
+            return;
+        }
+
+        const nuevaSolicitud = {
+            id: Date.now(),
+            solicitud: solicitud,
+            persona: persona,
+            fecha: document.getElementById('fecha').value,
+            email: document.getElementById('email').value,
+            explicacion: document.getElementById('explicacion').value,
+            dot: document.getElementById('dot').value,
+            caso: document.getElementById('caso').value,
+            tipoTransaccion: document.getElementById('tipoTransaccion').value,
+            monto: document.getElementById('monto').value,
+            fechaTransaccion: document.getElementById('fechaTransaccion').value,
+            departamento: document.getElementById('departamento').value,
+            status: document.getElementById('status').value,
+            quienAtiende: document.getElementById('quienAtiende').value,
+            comentarios: document.getElementById('comentarios').value,
+            subjectRespuesta: document.getElementById('subjectRespuesta').value,
+            fechaRegistro: new Date().toLocaleString()
+        };
+
+        // Obtener solicitudes existentes
+        let solicitudes = [];
+        const stored = localStorage.getItem('solicitudes_sistema');
+        if (stored) {
+            solicitudes = JSON.parse(stored);
+        }
+
+        solicitudes.push(nuevaSolicitud);
+        localStorage.setItem('solicitudes_sistema', JSON.stringify(solicitudes));
+
+        mostrarMensaje('✅ ¡Solicitud guardada con éxito!', 'exito');
+        
+        // Preguntar si quiere limpiar
+        if (confirm('¿Desea limpiar el formulario para una nueva solicitud?')) {
+            limpiarFormulario();
+        }
+    }
+
+    // Limpiar formulario
+    function limpiarFormulario() {
+        document.getElementById('formSolicitud').reset();
+        mostrarMensaje('🧹 Formulario limpiado', 'exito');
+    }
+
+    // Ver todas las solicitudes
+    function verSolicitudes() {
+        const stored = localStorage.getItem('solicitudes_sistema');
+        if (!stored) {
+            mostrarMensaje('📭 No hay solicitudes guardadas', 'error');
+            return;
+        }
+
+        const solicitudes = JSON.parse(stored);
+        if (solicitudes.length === 0) {
+            mostrarMensaje('📭 No hay solicitudes guardadas', 'error');
+            return;
+        }
+
+        let mensaje = `📋 TOTAL DE SOLICITUDES: ${solicitudes.length}\n\n`;
+        solicitudes.forEach((s, index) => {
+            mensaje += `${index + 1}. ${s.solicitud || 'Sin ID'} | ${s.persona || 'Sin nombre'} | $${s.monto || '0'} | ${s.status} | ${s.fechaRegistro}\n`;
+        });
+        mensaje += '\n💡 Los datos completos están en la consola del navegador (F12)';
+        alert(mensaje);
+        
+        // Mostrar en consola
+        console.clear();
+        console.log('=== TODAS LAS SOLICITUDES ===');
+        console.table(solicitudes);
+    }
+
+    // Exportar a Excel (CSV)
+    function exportarExcel() {
+        const stored = localStorage.getItem('solicitudes_sistema');
+        if (!stored) {
+            mostrarMensaje('📭 No hay datos para exportar', 'error');
+            return;
+        }
+
+        const solicitudes = JSON.parse(stored);
+        if (solicitudes.length === 0) {
+            mostrarMensaje('📭 No hay datos para exportar', 'error');
+            return;
+        }
+
+        // Crear CSV
+        const headers = ['ID', 'Solicitud', 'Persona', 'Fecha', 'Email', 'Explicación', 'DOT', 'Caso', 'Tipo Transacción', 'Monto', 'Fecha Transacción', 'Departamento', 'Status', 'Quien Atiende', 'Comentarios', 'Subject Respuesta', 'Fecha Registro'];
+        
+        let csvRows = [headers.join(',')];
+        
+        for (const s of solicitudes) {
+            const row = [
+                s.id,
+                `"${s.solicitud || ''}"`,
+                `"${s.persona || ''}"`,
+                s.fecha || '',
+                s.email || '',
+                `"${(s.explicacion || '').replace(/"/g, '""')}"`,
+                s.dot || '',
+                s.caso || '',
+                s.tipoTransaccion || '',
+                s.monto || '',
+                s.fechaTransaccion || '',
+                s.departamento || '',
+                s.status || '',
+                s.quienAtiende || '',
+                `"${(s.comentarios || '').replace(/"/g, '""')}"`,
+                `"${s.subjectRespuesta || ''}"`,
+                s.fechaRegistro || ''
+            ];
+            csvRows.push(row.join(','));
+        }
+
+        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', `solicitudes_${new Date().toISOString().slice(0,19)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        mostrarMensaje('📥 Archivo Excel (CSV) descargado', 'exito');
+    }
+
+    // Cargar fecha actual por defecto
+    document.getElementById('fecha').valueAsDate = new Date();
+</script>
+</body>
+</html>
