@@ -2,373 +2,500 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Formulario de Solicitudes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Solicitudes - Panel completo</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f0f2f5;
             margin: 0;
             padding: 20px;
-            min-height: 100vh;
         }
         .container {
-            max-width: 900px;
+            max-width: 1400px;
             margin: 0 auto;
+        }
+        /* Tarjetas */
+        .card {
             background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 24px;
         }
         h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
+            margin: 0 0 8px 0;
+            color: #1a73e8;
         }
         h2 {
-            color: #667eea;
-            font-size: 18px;
-            margin-top: 20px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 5px;
+            margin: 0 0 16px 0;
+            color: #333;
+            font-size: 1.4rem;
+            border-left: 4px solid #1a73e8;
+            padding-left: 12px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
         .campo {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
         label {
             display: block;
-            font-weight: bold;
+            font-weight: 600;
             margin-bottom: 5px;
             color: #555;
-            font-size: 14px;
+            font-size: 13px;
         }
         input, select, textarea {
             width: 100%;
-            padding: 10px;
+            padding: 10px 12px;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
-            box-sizing: border-box;
+            font-family: inherit;
         }
         textarea {
             resize: vertical;
-            min-height: 60px;
-        }
-        .fila {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            min-height: 70px;
         }
         button {
-            background: #667eea;
+            background: #1a73e8;
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 16px;
+            padding: 10px 20px;
             border-radius: 10px;
             cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
         }
         button:hover {
-            background: #5a67d8;
+            background: #1557b0;
+            transform: scale(1.02);
         }
-        .btn-limpiar {
-            background: #48bb78;
-            margin-top: 10px;
+        .btn-secondary {
+            background: #5f6368;
         }
-        .btn-limpiar:hover {
-            background: #38a169;
+        .btn-secondary:hover {
+            background: #3c4043;
         }
-        .mensaje {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
+        .btn-success {
+            background: #0d9488;
+        }
+        .btn-warning {
+            background: #e67e22;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        .filtros {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .filtros input, .filtros select {
+            width: auto;
+            flex: 1;
+            min-width: 150px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            position: sticky;
+            top: 0;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .estado {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .estado-pendiente { background: #fed7aa; color: #c2410c; }
+        .estado-proceso { background: #bfdbfe; color: #1e40af; }
+        .estado-completado { background: #bbf7d0; color: #166534; }
+        .estado-rechazado { background: #fecaca; color: #991b1b; }
+        .acciones {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+        }
+        .cerrar-modal {
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        .tabla-wrapper {
+            overflow-x: auto;
+        }
+        .stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 12px 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            flex: 1;
             text-align: center;
         }
-        .exito {
-            background: #c6f6d5;
-            color: #22543d;
-            border: 1px solid #9ae6b4;
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a73e8;
         }
-        .error {
-            background: #fed7d7;
-            color: #742a2a;
-            border: 1px solid #fc8181;
-        }
-        @media (max-width: 600px) {
-            .fila {
+        @media (max-width: 768px) {
+            .grid-2 {
                 grid-template-columns: 1fr;
             }
-            .container {
-                padding: 20px;
+            .acciones {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>📋 Sistema de Gestión de Solicitudes</h1>
-    <p style="text-align: center; color: #666;">Complete el formulario y los datos se guardarán en su navegador</p>
+    <!-- Panel de estadísticas -->
+    <div class="stats" id="stats">
+        <div class="stat-card">📋 Total: <span class="stat-number" id="totalCount">0</span></div>
+        <div class="stat-card">⏳ Pendientes: <span class="stat-number" id="pendienteCount">0</span></div>
+        <div class="stat-card">🔄 En proceso: <span class="stat-number" id="procesoCount">0</span></div>
+        <div class="stat-card">✅ Completados: <span class="stat-number" id="completadoCount">0</span></div>
+    </div>
 
-    <div id="mensaje" class="mensaje"></div>
-
-    <form id="formSolicitud">
-        <h2>📌 Información básica</h2>
-        <div class="fila">
-            <div class="campo">
-                <label>Solicitud ID:</label>
-                <input type="text" id="solicitud" placeholder="Ej: SOL-001">
-            </div>
-            <div class="campo">
-                <label>Persona que solicita:</label>
-                <input type="text" id="persona" placeholder="Nombre completo">
-            </div>
+    <!-- Formulario de creación -->
+    <div class="card">
+        <h2>➕ Nueva solicitud</h2>
+        <div class="grid-2">
+            <div class="campo"><label>Solicitud ID *</label><input type="text" id="solicitud" placeholder="Ej: SOL-001"></div>
+            <div class="campo"><label>Persona que solicita *</label><input type="text" id="persona" placeholder="Nombre completo"></div>
+            <div class="campo"><label>Fecha solicitud</label><input type="date" id="fecha"></div>
+            <div class="campo"><label>Email</label><input type="email" id="email" placeholder="correo@ejemplo.com"></div>
+            <div class="campo full-width"><label>Explicación detallada</label><textarea id="explicacion" placeholder="Describa lo que necesita..."></textarea></div>
+            <div class="campo"><label>DOT</label><input type="text" id="dot"></div>
+            <div class="campo"><label>Número de caso</label><input type="text" id="caso"></div>
+            <div class="campo"><label>Tipo transacción</label><select id="tipoTransaccion"><option>Compra</option><option>Reembolso</option><option>Pago proveedor</option></select></div>
+            <div class="campo"><label>Monto (USD)</label><input type="number" id="monto" step="0.01"></div>
+            <div class="campo"><label>Departamento</label><input type="text" id="departamento"></div>
         </div>
+        <button onclick="crearSolicitud()">📌 Crear solicitud</button>
+        <button class="btn-secondary" onclick="limpiarFormulario()">🗑️ Limpiar</button>
+    </div>
 
-        <div class="fila">
-            <div class="campo">
-                <label>Fecha de solicitud:</label>
-                <input type="date" id="fecha">
-            </div>
-            <div class="campo">
-                <label>Email:</label>
-                <input type="email" id="email" placeholder="correo@ejemplo.com">
-            </div>
+    <!-- Tabla de solicitudes -->
+    <div class="card">
+        <h2>📋 Listado de solicitudes</h2>
+        <div class="filtros">
+            <input type="text" id="buscar" placeholder="🔍 Buscar por ID, persona o DOT..." onkeyup="renderTabla()">
+            <select id="filtroEstado" onchange="renderTabla()">
+                <option value="">Todos los estados</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="En proceso">En proceso</option>
+                <option value="Completado">Completado</option>
+                <option value="Rechazado">Rechazado</option>
+            </select>
+            <button onclick="exportarExcel()">📊 Exportar a Excel</button>
         </div>
-
-        <div class="campo">
-            <label>Explicación detallada de lo que se solicita:</label>
-            <textarea id="explicacion" placeholder="Describa con el mayor detalle posible..."></textarea>
+        <div class="tabla-wrapper">
+            <table id="tablaSolicitudes">
+                <thead>
+                    <tr><th>ID</th><th>Solicitante</th><th>Fecha</th><th>DOT</th><th>Monto</th><th>Estado</th><th>Asignado a</th><th>Acciones</th></tr>
+                </thead>
+                <tbody id="tbodySolicitudes"></tbody>
+            </table>
         </div>
+    </div>
+</div>
 
-        <h2>💰 Información de transacción</h2>
-        <div class="fila">
-            <div class="campo">
-                <label>DOT:</label>
-                <input type="text" id="dot" placeholder="Número DOT">
-            </div>
-            <div class="campo">
-                <label>Número de caso:</label>
-                <input type="text" id="caso" placeholder="Número de caso">
-            </div>
-        </div>
-
-        <div class="fila">
-            <div class="campo">
-                <label>Tipo de transacción:</label>
-                <select id="tipoTransaccion">
-                    <option value="">Seleccione...</option>
-                    <option>Compra</option>
-                    <option>Reembolso</option>
-                    <option>Pago a proveedor</option>
-                    <option>Transferencia</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>Monto de la transacción:</label>
-                <input type="number" id="monto" step="0.01" placeholder="0.00">
-            </div>
-        </div>
-
-        <div class="fila">
-            <div class="campo">
-                <label>Fecha de transacción:</label>
-                <input type="date" id="fechaTransaccion">
-            </div>
-            <div class="campo">
-                <label>Departamento:</label>
-                <input type="text" id="departamento" placeholder="Departamento que solicita">
-            </div>
-        </div>
-
-        <h2>📎 Estado y seguimiento</h2>
-        <div class="fila">
-            <div class="campo">
-                <label>Estado (Status):</label>
-                <select id="status">
-                    <option>Pendiente</option>
-                    <option>En proceso</option>
-                    <option>Aprobado</option>
-                    <option>Rechazado</option>
-                    <option>Completado</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>Quien lo atiende:</label>
-                <input type="text" id="quienAtiende" placeholder="Responsable">
-            </div>
-        </div>
-
-        <div class="campo">
-            <label>Comentarios (COMMENTS):</label>
-            <textarea id="comentarios" placeholder="Observaciones adicionales..."></textarea>
-        </div>
-
-        <div class="campo">
-            <label>Subject de respuesta:</label>
-            <input type="text" id="subjectRespuesta" placeholder="Asunto para la respuesta">
-        </div>
-
-        <button type="button" onclick="guardarSolicitud()">💾 Guardar Solicitud</button>
-        <button type="button" class="btn-limpiar" onclick="limpiarFormulario()">🗑️ Limpiar Formulario</button>
-        <button type="button" class="btn-limpiar" onclick="verSolicitudes()" style="background: #ed8936;">📋 Ver Solicitudes Guardadas</button>
-        <button type="button" class="btn-limpiar" onclick="exportarExcel()" style="background: #38a169;">📊 Exportar a Excel</button>
-    </form>
+<!-- Modal para ver detalles -->
+<div id="modalDetalle" class="modal">
+    <div class="modal-content">
+        <span class="cerrar-modal" onclick="cerrarModal()">&times;</span>
+        <h3>📄 Detalle de solicitud</h3>
+        <div id="detalleBody"></div>
+        <hr>
+        <label>Comentario / Respuesta:</label>
+        <textarea id="respuestaComentario" rows="3" style="width:100%"></textarea>
+        <button onclick="guardarRespuesta()" style="margin-top:10px">💬 Guardar respuesta</button>
+    </div>
 </div>
 
 <script>
-    // Función para mostrar mensajes
-    function mostrarMensaje(texto, tipo) {
-        const msgDiv = document.getElementById('mensaje');
-        msgDiv.textContent = texto;
-        msgDiv.className = `mensaje ${tipo}`;
-        msgDiv.style.display = 'block';
-        setTimeout(() => {
-            msgDiv.style.display = 'none';
-        }, 3000);
+    let solicitudes = [];
+    let solicitudActualId = null;
+
+    function cargarDatos() {
+        const stored = localStorage.getItem('solicitudes_sistema_v2');
+        if (stored) {
+            solicitudes = JSON.parse(stored);
+        } else {
+            solicitudes = [];
+        }
+        actualizarStats();
+        renderTabla();
     }
 
-    // Guardar solicitud
-    function guardarSolicitud() {
-        // Validar mínimo un campo importante
-        const persona = document.getElementById('persona').value;
-        const solicitud = document.getElementById('solicitud').value;
-        
-        if (!persona && !solicitud) {
-            mostrarMensaje('❌ Por favor, complete al menos "Persona que solicita" o "Solicitud ID"', 'error');
+    function guardarEnLocal() {
+        localStorage.setItem('solicitudes_sistema_v2', JSON.stringify(solicitudes));
+        actualizarStats();
+        renderTabla();
+    }
+
+    function actualizarStats() {
+        document.getElementById('totalCount').innerText = solicitudes.length;
+        document.getElementById('pendienteCount').innerText = solicitudes.filter(s => s.status === 'Pendiente').length;
+        document.getElementById('procesoCount').innerText = solicitudes.filter(s => s.status === 'En proceso').length;
+        document.getElementById('completadoCount').innerText = solicitudes.filter(s => s.status === 'Completado').length;
+    }
+
+    function crearSolicitud() {
+        const persona = document.getElementById('persona').value.trim();
+        const solicitudId = document.getElementById('solicitud').value.trim();
+        if (!persona && !solicitudId) {
+            alert('❌ Complete al menos "Persona que solicita" o "Solicitud ID"');
             return;
         }
 
-        const nuevaSolicitud = {
+        const nueva = {
             id: Date.now(),
-            solicitud: solicitud,
+            solicitud: solicitudId || `SOL-${Date.now()}`,
             persona: persona,
-            fecha: document.getElementById('fecha').value,
+            fecha: document.getElementById('fecha').value || new Date().toISOString().slice(0,10),
             email: document.getElementById('email').value,
             explicacion: document.getElementById('explicacion').value,
             dot: document.getElementById('dot').value,
             caso: document.getElementById('caso').value,
             tipoTransaccion: document.getElementById('tipoTransaccion').value,
             monto: document.getElementById('monto').value,
-            fechaTransaccion: document.getElementById('fechaTransaccion').value,
             departamento: document.getElementById('departamento').value,
-            status: document.getElementById('status').value,
-            quienAtiende: document.getElementById('quienAtiende').value,
-            comentarios: document.getElementById('comentarios').value,
-            subjectRespuesta: document.getElementById('subjectRespuesta').value,
-            fechaRegistro: new Date().toLocaleString()
+            status: 'Pendiente',
+            asignadoA: '',
+            comentarioRespuesta: '',
+            fechaCreacion: new Date().toLocaleString()
         };
-
-        // Obtener solicitudes existentes
-        let solicitudes = [];
-        const stored = localStorage.getItem('solicitudes_sistema');
-        if (stored) {
-            solicitudes = JSON.parse(stored);
-        }
-
-        solicitudes.push(nuevaSolicitud);
-        localStorage.setItem('solicitudes_sistema', JSON.stringify(solicitudes));
-
-        mostrarMensaje('✅ ¡Solicitud guardada con éxito!', 'exito');
-        
-        // Preguntar si quiere limpiar
-        if (confirm('¿Desea limpiar el formulario para una nueva solicitud?')) {
-            limpiarFormulario();
-        }
+        solicitudes.unshift(nueva);
+        guardarEnLocal();
+        limpiarFormulario();
+        alert('✅ Solicitud creada correctamente');
     }
 
-    // Limpiar formulario
     function limpiarFormulario() {
-        document.getElementById('formSolicitud').reset();
-        mostrarMensaje('🧹 Formulario limpiado', 'exito');
+        document.getElementById('solicitud').value = '';
+        document.getElementById('persona').value = '';
+        document.getElementById('fecha').valueAsDate = new Date();
+        document.getElementById('email').value = '';
+        document.getElementById('explicacion').value = '';
+        document.getElementById('dot').value = '';
+        document.getElementById('caso').value = '';
+        document.getElementById('tipoTransaccion').value = 'Compra';
+        document.getElementById('monto').value = '';
+        document.getElementById('departamento').value = '';
     }
 
-    // Ver todas las solicitudes
-    function verSolicitudes() {
-        const stored = localStorage.getItem('solicitudes_sistema');
-        if (!stored) {
-            mostrarMensaje('📭 No hay solicitudes guardadas', 'error');
-            return;
+    function tomarSolicitud(id) {
+        const solicitud = solicitudes.find(s => s.id === id);
+        if (solicitud && solicitud.status === 'Pendiente') {
+            solicitud.status = 'En proceso';
+            solicitud.asignadoA = prompt('📌 Asignar a (nombre de quien toma la solicitud):', solicitud.asignadoA || '');
+            guardarEnLocal();
+        } else if (solicitud.status === 'En proceso') {
+            alert('Esta solicitud ya está en proceso');
+        } else {
+            alert('Solicitud no disponible para tomar');
         }
+    }
 
-        const solicitudes = JSON.parse(stored);
-        if (solicitudes.length === 0) {
-            mostrarMensaje('📭 No hay solicitudes guardadas', 'error');
-            return;
+    function cambiarEstado(id, nuevoEstado) {
+        const solicitud = solicitudes.find(s => s.id === id);
+        if (solicitud) {
+            solicitud.status = nuevoEstado;
+            if (nuevoEstado === 'Completado') {
+                solicitud.fechaCompletado = new Date().toLocaleString();
+            }
+            guardarEnLocal();
         }
+    }
 
-        let mensaje = `📋 TOTAL DE SOLICITUDES: ${solicitudes.length}\n\n`;
-        solicitudes.forEach((s, index) => {
-            mensaje += `${index + 1}. ${s.solicitud || 'Sin ID'} | ${s.persona || 'Sin nombre'} | $${s.monto || '0'} | ${s.status} | ${s.fechaRegistro}\n`;
+    function verDetalle(id) {
+        const solicitud = solicitudes.find(s => s.id === id);
+        if (!solicitud) return;
+        solicitudActualId = id;
+        const detalle = `
+            <p><strong>Solicitud ID:</strong> ${solicitud.solicitud}</p>
+            <p><strong>Solicitante:</strong> ${solicitud.persona}</p>
+            <p><strong>Email:</strong> ${solicitud.email || '-'}</p>
+            <p><strong>Fecha solicitud:</strong> ${solicitud.fecha}</p>
+            <p><strong>Explicación:</strong> ${solicitud.explicacion || '-'}</p>
+            <p><strong>DOT:</strong> ${solicitud.dot || '-'}</p>
+            <p><strong>N° Caso:</strong> ${solicitud.caso || '-'}</p>
+            <p><strong>Tipo transacción:</strong> ${solicitud.tipoTransaccion}</p>
+            <p><strong>Monto:</strong> $${solicitud.monto || '0'}</p>
+            <p><strong>Departamento:</strong> ${solicitud.departamento || '-'}</p>
+            <p><strong>Estado:</strong> ${solicitud.status}</p>
+            <p><strong>Asignado a:</strong> ${solicitud.asignadoA || 'Sin asignar'}</p>
+            <p><strong>Comentario/Respuesta:</strong> ${solicitud.comentarioRespuesta || 'Sin respuesta aún'}</p>
+            <p><strong>Creada:</strong> ${solicitud.fechaCreacion}</p>
+        `;
+        document.getElementById('detalleBody').innerHTML = detalle;
+        document.getElementById('respuestaComentario').value = solicitud.comentarioRespuesta || '';
+        document.getElementById('modalDetalle').style.display = 'flex';
+    }
+
+    function guardarRespuesta() {
+        if (solicitudActualId) {
+            const solicitud = solicitudes.find(s => s.id === solicitudActualId);
+            if (solicitud) {
+                solicitud.comentarioRespuesta = document.getElementById('respuestaComentario').value;
+                guardarEnLocal();
+                alert('✅ Respuesta guardada');
+                cerrarModal();
+            }
+        }
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalDetalle').style.display = 'none';
+        solicitudActualId = null;
+    }
+
+    function renderTabla() {
+        const busqueda = document.getElementById('buscar').value.toLowerCase();
+        const filtroEstado = document.getElementById('filtroEstado').value;
+        let filtradas = solicitudes.filter(s => {
+            const matchBusqueda = s.solicitud.toLowerCase().includes(busqueda) || 
+                                  s.persona.toLowerCase().includes(busqueda) ||
+                                  (s.dot || '').toLowerCase().includes(busqueda);
+            const matchEstado = filtroEstado === '' || s.status === filtroEstado;
+            return matchBusqueda && matchEstado;
         });
-        mensaje += '\n💡 Los datos completos están en la consola del navegador (F12)';
-        alert(mensaje);
-        
-        // Mostrar en consola
-        console.clear();
-        console.log('=== TODAS LAS SOLICITUDES ===');
-        console.table(solicitudes);
+        const tbody = document.getElementById('tbodySolicitudes');
+        tbody.innerHTML = '';
+        filtradas.forEach(s => {
+            const estadoClass = {
+                'Pendiente': 'estado-pendiente',
+                'En proceso': 'estado-proceso',
+                'Completado': 'estado-completado',
+                'Rechazado': 'estado-rechazado'
+            }[s.status] || 'estado-pendiente';
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>${s.solicitud}</td>
+                <td>${s.persona}</td>
+                <td>${s.fecha}</td>
+                <td>${s.dot || '-'}</td>
+                <td>$${s.monto || '0'}</td>
+                <td><span class="estado ${estadoClass}">${s.status}</span></td>
+                <td>${s.asignadoA || '—'}</td>
+                <td class="acciones">
+                    <button class="btn-sm" onclick="verDetalle(${s.id})">👁️ Ver</button>
+                    ${s.status === 'Pendiente' ? `<button class="btn-sm btn-success" onclick="tomarSolicitud(${s.id})">📌 Tomar</button>` : ''}
+                    ${s.status === 'En proceso' ? `<button class="btn-sm btn-warning" onclick="cambiarEstado(${s.id}, 'Completado')">✅ Completar</button>` : ''}
+                    <select onchange="cambiarEstado(${s.id}, this.value)" style="width:110px;padding:4px;">
+                        <option value="">Cambiar estado</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="Completado">Completado</option>
+                        <option value="Rechazado">Rechazado</option>
+                    </select>
+                </td>
+            `;
+        });
     }
 
-    // Exportar a Excel (CSV)
     function exportarExcel() {
-        const stored = localStorage.getItem('solicitudes_sistema');
-        if (!stored) {
-            mostrarMensaje('📭 No hay datos para exportar', 'error');
-            return;
-        }
-
-        const solicitudes = JSON.parse(stored);
         if (solicitudes.length === 0) {
-            mostrarMensaje('📭 No hay datos para exportar', 'error');
+            alert('No hay datos para exportar');
             return;
         }
-
-        // Crear CSV
-        const headers = ['ID', 'Solicitud', 'Persona', 'Fecha', 'Email', 'Explicación', 'DOT', 'Caso', 'Tipo Transacción', 'Monto', 'Fecha Transacción', 'Departamento', 'Status', 'Quien Atiende', 'Comentarios', 'Subject Respuesta', 'Fecha Registro'];
-        
+        const headers = ['ID', 'Solicitud', 'Persona', 'Fecha', 'Email', 'Explicación', 'DOT', 'Caso', 'Tipo Transacción', 'Monto', 'Departamento', 'Estado', 'Asignado A', 'Comentario Respuesta', 'Fecha Creación'];
         let csvRows = [headers.join(',')];
-        
         for (const s of solicitudes) {
             const row = [
                 s.id,
-                `"${s.solicitud || ''}"`,
-                `"${s.persona || ''}"`,
-                s.fecha || '',
+                `"${s.solicitud}"`,
+                `"${s.persona}"`,
+                s.fecha,
                 s.email || '',
                 `"${(s.explicacion || '').replace(/"/g, '""')}"`,
                 s.dot || '',
                 s.caso || '',
                 s.tipoTransaccion || '',
                 s.monto || '',
-                s.fechaTransaccion || '',
                 s.departamento || '',
-                s.status || '',
-                s.quienAtiende || '',
-                `"${(s.comentarios || '').replace(/"/g, '""')}"`,
-                `"${s.subjectRespuesta || ''}"`,
-                s.fechaRegistro || ''
+                s.status,
+                `"${s.asignadoA || ''}"`,
+                `"${(s.comentarioRespuesta || '').replace(/"/g, '""')}"`,
+                s.fechaCreacion
             ];
             csvRows.push(row.join(','));
         }
-
         const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.href = url;
-        link.setAttribute('download', `solicitudes_${new Date().toISOString().slice(0,19)}.csv`);
+        link.setAttribute('download', `solicitudes_completas_${new Date().toISOString().slice(0,19)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        
-        mostrarMensaje('📥 Archivo Excel (CSV) descargado', 'exito');
     }
 
-    // Cargar fecha actual por defecto
-    document.getElementById('fecha').valueAsDate = new Date();
+    window.onclick = function(event) {
+        const modal = document.getElementById('modalDetalle');
+        if (event.target === modal) cerrarModal();
+    };
+
+    cargarDatos();
 </script>
 </body>
 </html>
