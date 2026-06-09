@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Solicitudes - Gestión</title>
+    <title>Sistema de Solicitudes - Adjuntos Reales</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -66,7 +66,7 @@
             border-radius: 12px;
             font-size: 14px;
         }
-        input[type="file"] { padding: 8px; }
+        input[type="file"] { padding: 8px; background: white; }
         button {
             background: #1a73e8;
             color: white;
@@ -100,7 +100,6 @@
         .estado-proceso { background: #dbeafe; color: #1e40af; }
         .estado-completado { background: #dcfce7; color: #166534; }
         .estado-rechazado { background: #fecaca; color: #991b1b; }
-        .acciones { display: flex; gap: 8px; flex-wrap: wrap; }
         .btn-sm { padding: 5px 12px; font-size: 12px; margin-top: 0; }
         .modal {
             display: none;
@@ -146,11 +145,20 @@
         }
         hr { margin: 16px 0; }
         .ver-adjunto {
-            color: #1a73e8;
+            display: inline-block;
+            background: #1a73e8;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 16px;
             text-decoration: none;
-            cursor: pointer;
+            font-size: 12px;
         }
-        .ver-adjunto:hover { text-decoration: underline; }
+        .ver-adjunto:hover { background: #1557b0; }
+        .nombre-archivo {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -177,20 +185,23 @@
                 <div class="form-group"><label>DOT <span class="required">*</span></label><input type="text" id="dot" placeholder="Número DOT"></div>
                 <div class="form-group"><label>Número de caso <span class="required">*</span></label><input type="text" id="numCaso" placeholder="Número de caso"></div>
                 <div class="form-group"><label>Subject (en caso de aplicar)</label><input type="text" id="subject" placeholder="Asunto"></div>
-                <div class="form-group"><label>Adjuntar imagen/soporte <span class="required">*</span></label><input type="file" id="adjunto" accept="image/*,application/pdf,.doc,.docx,.xlsx"></div>
-                <div class="form-group"><label>Especificar tipo de transacción <span class="required">*</span></label><input type="text" id="tipoTransaccion" placeholder="Ej: Transferencia, Pago proveedor"></div>
+                <div class="form-group"><label>Adjuntar imagen/soporte <span class="required">*</span></label>
+                    <input type="file" id="adjunto" accept="image/*,application/pdf,.doc,.docx,.xlsx,.txt">
+                    <small class="nombre-archivo" id="nombreArchivoMostrar"></small>
+                </div>
+                <div class="form-group"><label>Especificar tipo de transacción <span class="required">*</span></label><input type="text" id="tipoTransaccion" placeholder="Ej: Transferencia"></div>
                 <div class="form-group"><label>Fecha de la transacción <span class="required">*</span></label><input type="date" id="fechaTransaccion"></div>
                 <div class="form-group"><label>Departamento que solicita <span class="required">*</span></label><input type="text" id="departamento" placeholder="Departamento"></div>
                 <div class="form-group"><label>Email Address <span class="required">*</span></label><input type="email" id="emailSolicitante" placeholder="correo@ejemplo.com"></div>
                 <div class="form-group"><label>Tipo de solicitud <span class="required">*</span></label><select id="tipoSolicitud"><option>Compra</option><option>Reembolso</option><option>Pago factura</option><option>Contratación</option></select></div>
                 <div class="form-group"><label>Monto de la transacción <span class="required">*</span></label><input type="number" id="montoTransaccion" step="0.01" placeholder="0.00"></div>
                 <div class="form-group"><label>Número de Caso en P&S</label><input type="text" id="casoPS" placeholder="Número P&S"></div>
-                <div class="form-group full-width"><label>Explicación detallada de lo que se solicita <span class="required">*</span></label><textarea id="explicacionDetallada" rows="3" placeholder="Describa con el mayor detalle posible..."></textarea></div>
-                <div class="form-group"><label>Número de transacción</label><input type="text" id="numTransaccion" placeholder="Número de transacción"></div>
-                <div class="form-group"><label>Fecha de la transacción (banco)</label><input type="date" id="fechaTransaccionBanco"></div>
-                <div class="form-group"><label>Monto de la transacción (banco)</label><input type="number" id="montoTransaccionBanco" step="0.01"></div>
-                <div class="form-group full-width"><label>Descripción de la transacción reflejada en el banco</label><textarea id="descripcionBanco" rows="2" placeholder="Descripción..."></textarea></div>
-                <div class="form-group"><label>Tiempo de respuesta requerido <span class="required">*</span></label><select id="tiempoRespuesta"><option>Inmediato (< 2h)</option><option>Mismo día</option><option>24 horas</option><option>48 horas</option><option>3 días hábiles</option></select></div>
+                <div class="form-group full-width"><label>Explicación detallada <span class="required">*</span></label><textarea id="explicacionDetallada" rows="3"></textarea></div>
+                <div class="form-group"><label>Número de transacción</label><input type="text" id="numTransaccion"></div>
+                <div class="form-group"><label>Fecha transacción (banco)</label><input type="date" id="fechaTransaccionBanco"></div>
+                <div class="form-group"><label>Monto transacción (banco)</label><input type="number" id="montoTransaccionBanco" step="0.01"></div>
+                <div class="form-group full-width"><label>Descripción reflejada en el banco</label><textarea id="descripcionBanco" rows="2"></textarea></div>
+                <div class="form-group"><label>Tiempo de respuesta <span class="required">*</span></label><select id="tiempoRespuesta"><option>Inmediato (< 2h)</option><option>Mismo día</option><option>24 horas</option><option>48 horas</option><option>3 días hábiles</option></select></div>
             </div>
             <button onclick="crearSolicitud()">🚀 Enviar Solicitud</button>
         </div>
@@ -199,38 +210,38 @@
     <!-- ==================== PESTAÑA: SOLICITUDES PENDIENTES ==================== -->
     <div id="tabPendientes" class="tab-content" style="display:none;">
         <div class="table-wrapper">
-            <input type="text" id="buscarPendientes" placeholder="🔍 Buscar por ID, DOT o email..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
+            <input type="text" id="buscarPendientes" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
             <table>
-                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Email</th><th>Tipo</th><th>Monto</th><th>Tiempo Respuesta</th><th>Adjunto</th></tr></thead>
+                <thead><tr><th>ID</th><th>DOT</th><th>Solicitante</th><th>Monto</th><th>Adjunto</th><th>Acciones</th></tr></thead>
                 <tbody id="tbodyPendientes"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- ==================== PESTAÑA: RESPONDER SOLICITUDES ==================== -->
+    <!-- ==================== PESTAÑA: RESPONDER ==================== -->
     <div id="tabResponder" class="tab-content" style="display:none;">
         <div class="table-wrapper">
-            <input type="text" id="buscarResponder" placeholder="🔍 Buscar por ID, DOT o email..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
+            <input type="text" id="buscarResponder" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
             <table>
-                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Estado</th><th>Adjunto</th><th>Acciones</th></tr></thead>
+                <thead><tr><th>ID</th><th>DOT</th><th>Solicitante</th><th>Estado</th><th>Adjunto</th><th>Acciones</th></tr></thead>
                 <tbody id="tbodyResponder"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- ==================== PESTAÑA: TODAS LAS SOLICITUDES ==================== -->
+    <!-- ==================== PESTAÑA: TODAS ==================== -->
     <div id="tabTodas" class="tab-content" style="display:none;">
         <div class="table-wrapper">
             <input type="text" id="buscarTodas" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
             <table>
-                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Atendido por</th><th>Estado</th><th>Respuesta</th><th>Adjunto</th></tr></thead>
+                <thead><tr><th>ID</th><th>DOT</th><th>Solicitante</th><th>Atendido por</th><th>Estado</th><th>Adjunto</th><th>Respuesta</th></tr></thead>
                 <tbody id="tbodyTodas"></tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- ==================== MODAL PARA RESPONDER ==================== -->
+<!-- ==================== MODAL RESPONDER ==================== -->
 <div id="modalResponder" class="modal">
     <div class="modal-content">
         <h3>✏️ Responder Solicitud</h3>
@@ -239,45 +250,40 @@
         <div class="form-group"><label>Solicitud ID</label><input type="text" id="respSolicitudId" readonly style="background:#f1f5f9;"></div>
         <div class="form-group"><label>Quien lo atiende <span class="required">*</span></label><input type="text" id="quienAtiende" placeholder="Tu nombre completo"></div>
         <div class="form-group"><label>Status <span class="required">*</span></label><select id="respStatus"><option value="En proceso">En proceso</option><option value="Completado">Completado</option><option value="Rechazado">Rechazado</option></select></div>
-        <div class="form-group"><label>COMMENTS</label><textarea id="respComments" rows="3" placeholder="Comentarios sobre la gestión..."></textarea></div>
+        <div class="form-group"><label>COMMENTS</label><textarea id="respComments" rows="3" placeholder="Comentarios..."></textarea></div>
         <div class="form-group"><label>SUBJECT RESPUESTA <span class="required">*</span></label><input type="text" id="subjectRespuesta" placeholder="Asunto de la respuesta"></div>
-        <button onclick="guardarRespuesta()">💾 Guardar y enviar correo al solicitante</button>
+        <button onclick="guardarRespuesta()">💾 Guardar y enviar correo</button>
         <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
     </div>
 </div>
 
 <script>
-    // ==================== CONFIGURACIÓN EMAILJS ====================
     emailjs.init("TU_USER_ID_DE_EMAILJS");
     
     let solicitudes = [];
     let solicitudActual = null;
 
     function cargarDatos() {
-        const stored = localStorage.getItem('solicitudes_db');
-        if (stored) {
-            solicitudes = JSON.parse(stored);
-        } else {
-            solicitudes = [];
-        }
+        const stored = localStorage.getItem('solicitudes_adjuntos');
+        if (stored) solicitudes = JSON.parse(stored);
+        else solicitudes = [];
         renderTablas();
         actualizarStats();
     }
 
     function guardarDatos() {
-        localStorage.setItem('solicitudes_db', JSON.stringify(solicitudes));
+        localStorage.setItem('solicitudes_adjuntos', JSON.stringify(solicitudes));
         renderTablas();
         actualizarStats();
     }
 
     function actualizarStats() {
         const pendientes = solicitudes.filter(s => s.status === 'Pendiente').length;
-        const enProceso = solicitudes.filter(s => s.status === 'En proceso').length;
         const total = solicitudes.length;
         document.getElementById('statsGrid').innerHTML = `
             <div class="stat-card">📋 Total: <div class="stat-number">${total}</div></div>
             <div class="stat-card">⏳ Pendientes: <div class="stat-number">${pendientes}</div></div>
-            <div class="stat-card">🔄 En proceso: <div class="stat-number">${enProceso}</div></div>
+            <div class="stat-card">🔄 En proceso: <div class="stat-number">${solicitudes.filter(s => s.status === 'En proceso').length}</div></div>
             <div class="stat-card">✅ Completadas: <div class="stat-number">${solicitudes.filter(s => s.status === 'Completado').length}</div></div>
         `;
     }
@@ -286,7 +292,12 @@
         return `SOL-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     }
 
-    // Convertir archivo a Base64
+    // Mostrar nombre del archivo seleccionado
+    document.getElementById('adjunto').addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name;
+        document.getElementById('nombreArchivoMostrar').innerText = fileName ? `📎 ${fileName}` : '';
+    });
+
     function archivoABase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -296,7 +307,6 @@
         });
     }
 
-    // ==================== CREAR NUEVA SOLICITUD ====================
     async function crearSolicitud() {
         const email = document.getElementById('emailSolicitante').value;
         if (!email) {
@@ -310,8 +320,15 @@
 
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarNotificacion('❌ El archivo es muy grande (máx 5MB)', true);
+                return;
+            }
             nombreArchivo = file.name;
             archivoBase64 = await archivoABase64(file);
+        } else {
+            mostrarNotificacion('❌ Debes adjuntar un archivo', true);
+            return;
         }
 
         const nuevaSolicitud = {
@@ -346,12 +363,14 @@
         guardarDatos();
         
         enviarCorreoConfirmacion(nuevaSolicitud);
-        mostrarNotificacion('✅ Solicitud creada exitosamente');
+        mostrarNotificacion('✅ Solicitud creada con archivo adjunto');
         
+        // Limpiar formulario
         document.querySelectorAll('#tabNueva input, #tabNueva select, #tabNueva textarea').forEach(el => {
             if (el.type !== 'submit' && el.type !== 'button' && el.type !== 'file') el.value = '';
         });
         document.getElementById('adjunto').value = '';
+        document.getElementById('nombreArchivoMostrar').innerText = '';
         document.getElementById('fechaSolicitud').valueAsDate = new Date();
         document.getElementById('fechaTransaccion').valueAsDate = new Date();
     }
@@ -365,17 +384,13 @@
             tipo: solicitud.tipoSolicitud,
             monto: solicitud.montoTransaccion,
             tiempo_respuesta: solicitud.tiempoRespuesta,
-            mensaje: 'Hemos recibido tu solicitud y será atendida a la brevedad.'
+            mensaje: 'Hemos recibido tu solicitud con el archivo adjunto.'
         };
-        
         try {
             await emailjs.send('TU_SERVICE_ID', 'TU_TEMPLATE_CONFIRMACION', templateParams);
-        } catch (error) {
-            console.error('Error al enviar correo:', error);
-        }
+        } catch (error) { console.error(error); }
     }
 
-    // ==================== RESPONDER SOLICITUD ====================
     function abrirResponder(id) {
         solicitudActual = solicitudes.find(s => s.id === id);
         if (!solicitudActual) return;
@@ -386,16 +401,19 @@
         document.getElementById('respComments').value = solicitudActual.comments || '';
         document.getElementById('subjectRespuesta').value = solicitudActual.subjectRespuesta || '';
         
-        const adjuntoLink = solicitudActual.archivoAdjunto ? `<br><strong>Adjunto:</strong> <a href="${solicitudActual.archivoAdjunto}" target="_blank" class="ver-adjunto">📎 Ver ${solicitudActual.nombreArchivo || 'archivo'}</a>` : '';
+        const adjuntoHtml = solicitudActual.archivoAdjunto ? 
+            `<br><strong>📎 Adjunto:</strong> 
+             <a href="${solicitudActual.archivoAdjunto}" target="_blank" class="ver-adjunto" style="display:inline-block; margin-top:8px;">📄 Ver ${solicitudActual.nombreArchivo}</a>
+             <br><small>Haz clic para ver/descargar</small>` : '<br><strong>📎 Adjunto:</strong> Sin archivo';
         
         const info = `
-            <strong>Email solicitante:</strong> ${solicitudActual.emailSolicitante}<br>
+            <strong>Solicitante:</strong> ${solicitudActual.emailSolicitante}<br>
             <strong>DOT:</strong> ${solicitudActual.dot}<br>
             <strong>Monto:</strong> $${solicitudActual.montoTransaccion}<br>
-            <strong>Explicación:</strong> ${solicitudActual.explicacionDetallada?.substring(0, 100)}...${adjuntoLink}
+            <strong>Explicación:</strong> ${solicitudActual.explicacionDetallada?.substring(0, 150)}...<br>
+            ${adjuntoHtml}
         `;
         document.getElementById('infoSolicitud').innerHTML = info;
-        
         document.getElementById('modalResponder').style.display = 'flex';
     }
 
@@ -403,16 +421,10 @@
         if (!solicitudActual) return;
         
         const quien = document.getElementById('quienAtiende').value;
-        if (!quien) {
-            mostrarNotificacion('❌ Ingresa quién atiende la solicitud', true);
-            return;
-        }
+        if (!quien) { mostrarNotificacion('❌ Ingresa quién atiende', true); return; }
         
         const subjectResp = document.getElementById('subjectRespuesta').value;
-        if (!subjectResp) {
-            mostrarNotificacion('❌ Ingresa el SUBJECT RESPUESTA', true);
-            return;
-        }
+        if (!subjectResp) { mostrarNotificacion('❌ Ingresa el SUBJECT RESPUESTA', true); return; }
         
         solicitudActual.atendidoPor = quien;
         solicitudActual.status = document.getElementById('respStatus').value;
@@ -422,9 +434,8 @@
         
         guardarDatos();
         await enviarCorreoRespuesta(solicitudActual);
-        
         cerrarModal();
-        mostrarNotificacion('✅ Respuesta guardada y correo enviado al solicitante');
+        mostrarNotificacion('✅ Respuesta guardada y correo enviado');
     }
 
     async function enviarCorreoRespuesta(solicitud) {
@@ -437,60 +448,49 @@
             dot: solicitud.dot,
             atendido_por: solicitud.atendidoPor
         };
-        
         try {
             await emailjs.send('TU_SERVICE_ID', 'TU_TEMPLATE_RESPUESTA', templateParams);
-        } catch (error) {
-            console.error('Error al enviar correo:', error);
-            mostrarNotificacion('⚠️ Solicitud guardada pero hubo error al enviar el correo', true);
-        }
+        } catch (error) { console.error(error); }
     }
 
-    function verAdjunto(archivoBase64, nombre) {
-        if (archivoBase64) {
-            const link = document.createElement('a');
-            link.href = archivoBase64;
-            link.download = nombre || 'adjunto';
-            link.click();
-        }
-    }
-
-    // ==================== RENDERIZAR TABLAS ====================
     function renderTablas() {
+        // Pendientes
         const pendientes = solicitudes.filter(s => s.status === 'Pendiente');
         const busqPend = document.getElementById('buscarPendientes')?.value.toLowerCase() || '';
         const filtPend = pendientes.filter(s => s.id.toLowerCase().includes(busqPend) || s.dot.toLowerCase().includes(busqPend));
         document.getElementById('tbodyPendientes').innerHTML = filtPend.map(s => `
             <tr>
-                <td>${s.id}</td><td>${s.fechaSolicitud}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td>
-                <td>${s.tipoSolicitud}</td><td>$${s.montoTransaccion}</td><td>${s.tiempoRespuesta}</td>
+                <td>${s.id}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td><td>$${s.montoTransaccion}</td>
                 <td>${s.archivoAdjunto ? `<a href="${s.archivoAdjunto}" target="_blank" class="ver-adjunto">📎 ${s.nombreArchivo}</a>` : '—'}</td>
+                <td><button class="btn-sm" onclick="abrirResponder('${s.id}')">✏️ Responder</button></td>
             </tr>
-        `).join('') || '<tr><td colspan="8">✨ No hay solicitudes pendientes</td></tr>';
+        `).join('') || '<tr><td colspan="6">✨ No hay solicitudes pendientes</td></tr>';
         
+        // Responder
         const porResponder = solicitudes.filter(s => s.status !== 'Completado');
         const busqResp = document.getElementById('buscarResponder')?.value.toLowerCase() || '';
         const filtResp = porResponder.filter(s => s.id.toLowerCase().includes(busqResp) || s.dot.toLowerCase().includes(busqResp));
         document.getElementById('tbodyResponder').innerHTML = filtResp.map(s => `
             <tr>
-                <td>${s.id}</td><td>${s.fechaSolicitud}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td>
+                <td>${s.id}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td>
                 <td><span class="estado ${s.status === 'Pendiente' ? 'estado-pendiente' : 'estado-proceso'}">${s.status}</span></td>
                 <td>${s.archivoAdjunto ? `<a href="${s.archivoAdjunto}" target="_blank" class="ver-adjunto">📎 ${s.nombreArchivo}</a>` : '—'}</td>
                 <td><button class="btn-sm" onclick="abrirResponder('${s.id}')">✏️ Responder</button></td>
             </tr>
-        `).join('') || '<tr><td colspan="7">📭 No hay solicitudes para responder</td></tr>';
+        `).join('') || '<tr><td colspan="6">📭 No hay solicitudes para responder</td></tr>';
         
+        // Todas
         const busqTodas = document.getElementById('buscarTodas')?.value.toLowerCase() || '';
         const filtTodas = solicitudes.filter(s => s.id.toLowerCase().includes(busqTodas));
         document.getElementById('tbodyTodas').innerHTML = filtTodas.map(s => `
             <tr>
-                <td>${s.id}</td><td>${s.fechaSolicitud}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td>
+                <td>${s.id}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td>
                 <td>${s.atendidoPor || '—'}</td>
                 <td><span class="estado ${s.status === 'Pendiente' ? 'estado-pendiente' : (s.status === 'Completado' ? 'estado-completado' : 'estado-proceso')}">${s.status}</span></td>
-                <td>${s.subjectRespuesta?.substring(0, 30) || '—'}</td>
                 <td>${s.archivoAdjunto ? `<a href="${s.archivoAdjunto}" target="_blank" class="ver-adjunto">📎 ${s.nombreArchivo}</a>` : '—'}</td>
+                <td>${s.subjectRespuesta?.substring(0, 30) || '—'}</td>
             </tr>
-        `).join('') || '<tr><td colspan="8">📭 No hay solicitudes</td></tr>';
+        `).join('') || '<tr><td colspan="7">📭 No hay solicitudes</td></tr>';
     }
 
     function mostrarNotificacion(msg, error = false) {
@@ -520,7 +520,6 @@
     
     document.getElementById('fechaSolicitud').valueAsDate = new Date();
     document.getElementById('fechaTransaccion').valueAsDate = new Date();
-    
     cargarDatos();
     window.onclick = (e) => { if (e.target === document.getElementById('modalResponder')) cerrarModal(); };
 </script>
