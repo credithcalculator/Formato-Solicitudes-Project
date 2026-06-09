@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Solicitudes - Con envío de correos</title>
+    <title>Sistema de Solicitudes - Gestión</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -59,6 +59,7 @@
         .form-group { display: flex; flex-direction: column; gap: 6px; }
         .form-group.full-width { grid-column: 1 / -1; }
         label { font-weight: 600; font-size: 13px; color: #475569; }
+        label .required { color: #ef4444; }
         input, select, textarea {
             padding: 10px 12px;
             border: 1px solid #cbd5e1;
@@ -77,7 +78,6 @@
         }
         button:hover { background: #1557b0; }
         .btn-secondary { background: #64748b; }
-        .btn-success { background: #10b981; }
         .table-wrapper {
             overflow-x: auto;
             background: white;
@@ -98,6 +98,7 @@
         .estado-pendiente { background: #fef3c7; color: #b45309; }
         .estado-proceso { background: #dbeafe; color: #1e40af; }
         .estado-completado { background: #dcfce7; color: #166534; }
+        .estado-rechazado { background: #fecaca; color: #991b1b; }
         .acciones { display: flex; gap: 8px; flex-wrap: wrap; }
         .btn-sm { padding: 5px 12px; font-size: 12px; margin-top: 0; }
         .modal {
@@ -133,6 +134,14 @@
             to { transform: translateX(0); opacity: 1; }
         }
         @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+        .campo-info {
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        hr { margin: 16px 0; }
     </style>
 </head>
 <body>
@@ -146,120 +155,142 @@
     <div class="tabs">
         <button class="tab-btn active" data-tab="nueva">📝 Nueva Solicitud</button>
         <button class="tab-btn" data-tab="pendientes">⏳ Pendientes</button>
-        <button class="tab-btn" data-tab="misTareas">👤 Mis Tareas</button>
-        <button class="tab-btn" data-tab="todas">📋 Todas</button>
+        <button class="tab-btn" data-tab="responder">✏️ Responder Solicitudes</button>
+        <button class="tab-btn" data-tab="todas">📋 Todas las Solicitudes</button>
     </div>
 
-    <!-- Pestaña: Nueva Solicitud -->
+    <!-- ==================== PESTAÑA: NUEVA SOLICITUD ==================== -->
     <div id="tabNueva" class="tab-content">
         <div class="form-panel">
-            <h2>📝 Formulario de Solicitud</h2>
+            <h2>📝 Nueva Solicitud</h2>
             <div class="form-grid">
-                <div class="form-group"><label>Fecha de solicitud *</label><input type="date" id="fechaSolicitud"></div>
-                <div class="form-group"><label>DOT *</label><input type="text" id="dot" placeholder="Número DOT"></div>
-                <div class="form-group"><label>Número de caso *</label><input type="text" id="numCaso" placeholder="Número de caso"></div>
+                <div class="form-group"><label>Fecha de solicitud <span class="required">*</span></label><input type="date" id="fechaSolicitud"></div>
+                <div class="form-group"><label>DOT <span class="required">*</span></label><input type="text" id="dot" placeholder="Número DOT"></div>
+                <div class="form-group"><label>Número de caso <span class="required">*</span></label><input type="text" id="numCaso" placeholder="Número de caso"></div>
                 <div class="form-group"><label>Subject (en caso de aplicar)</label><input type="text" id="subject" placeholder="Asunto"></div>
-                <div class="form-group"><label>Adjuntar imagen/soporte (nombre del archivo)</label><input type="text" id="adjunto" placeholder="Nombre del archivo adjunto"></div>
-                <div class="form-group"><label>Especificar tipo de transacción *</label><input type="text" id="tipoTransaccion" placeholder="Ej: Transferencia, Pago proveedor"></div>
-                <div class="form-group"><label>Fecha de la transacción *</label><input type="date" id="fechaTransaccion"></div>
-                <div class="form-group"><label>Departamento que solicita *</label><input type="text" id="departamento" placeholder="Departamento"></div>
-                <div class="form-group"><label>Email Address *</label><input type="email" id="emailSolicitante" placeholder="correo@ejemplo.com"></div>
-                <div class="form-group"><label>Tipo de solicitud *</label><select id="tipoSolicitud"><option>Compra</option><option>Reembolso</option><option>Pago factura</option><option>Contratación</option></select></div>
-                <div class="form-group"><label>Monto de la transacción *</label><input type="number" id="montoTransaccion" step="0.01" placeholder="0.00"></div>
+                <div class="form-group"><label>Adjuntar imagen/soporte (nombre del archivo) <span class="required">*</span></label><input type="text" id="adjunto" placeholder="Ej: factura.pdf, soporte.jpg"></div>
+                <div class="form-group"><label>Especificar tipo de transacción <span class="required">*</span></label><input type="text" id="tipoTransaccion" placeholder="Ej: Transferencia, Pago proveedor"></div>
+                <div class="form-group"><label>Fecha de la transacción <span class="required">*</span></label><input type="date" id="fechaTransaccion"></div>
+                <div class="form-group"><label>Departamento que solicita <span class="required">*</span></label><input type="text" id="departamento" placeholder="Departamento"></div>
+                <div class="form-group"><label>Email Address <span class="required">*</span></label><input type="email" id="emailSolicitante" placeholder="correo@ejemplo.com"></div>
+                <div class="form-group"><label>Tipo de solicitud <span class="required">*</span></label><select id="tipoSolicitud"><option>Compra</option><option>Reembolso</option><option>Pago factura</option><option>Contratación</option></select></div>
+                <div class="form-group"><label>Monto de la transacción <span class="required">*</span></label><input type="number" id="montoTransaccion" step="0.01" placeholder="0.00"></div>
                 <div class="form-group"><label>Número de Caso en P&S</label><input type="text" id="casoPS" placeholder="Número P&S"></div>
-                <div class="form-group full-width"><label>Explicación detallada de lo que se solicita *</label><textarea id="explicacionDetallada" rows="3" placeholder="Describa con el mayor detalle posible..."></textarea></div>
+                <div class="form-group full-width"><label>Explicación detallada de lo que se solicita <span class="required">*</span></label><textarea id="explicacionDetallada" rows="3" placeholder="Describa con el mayor detalle posible..."></textarea></div>
                 <div class="form-group"><label>Número de transacción</label><input type="text" id="numTransaccion" placeholder="Número de transacción"></div>
                 <div class="form-group"><label>Fecha de la transacción (banco)</label><input type="date" id="fechaTransaccionBanco"></div>
                 <div class="form-group"><label>Monto de la transacción (banco)</label><input type="number" id="montoTransaccionBanco" step="0.01"></div>
                 <div class="form-group full-width"><label>Descripción de la transacción reflejada en el banco</label><textarea id="descripcionBanco" rows="2" placeholder="Descripción..."></textarea></div>
-                <div class="form-group"><label>Tiempo de respuesta requerido *</label><select id="tiempoRespuesta"><option>Inmediato (< 2h)</option><option>Mismo día</option><option>24 horas</option><option>48 horas</option><option>3 días hábiles</option></select></div>
+                <div class="form-group"><label>Tiempo de respuesta requerido <span class="required">*</span></label><select id="tiempoRespuesta"><option>Inmediato (< 2h)</option><option>Mismo día</option><option>24 horas</option><option>48 horas</option><option>3 días hábiles</option></select></div>
             </div>
             <button onclick="crearSolicitud()">🚀 Enviar Solicitud</button>
         </div>
     </div>
 
-    <!-- Pestaña: Pendientes -->
+    <!-- ==================== PESTAÑA: PENDIENTES ==================== -->
     <div id="tabPendientes" class="tab-content" style="display:none;">
         <div class="table-wrapper">
-            <input type="text" id="buscarPendientes" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
-            <table><thead><tr><th>ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Tipo</th><th>Monto</th><th>Tiempo Respuesta</th><th>Acciones</th></tr></thead><tbody id="tbodyPendientes"></tbody></table>
+            <input type="text" id="buscarPendientes" placeholder="🔍 Buscar por ID, DOT o solicitante..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
+            <table>
+                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Email</th><th>Tipo</th><th>Monto</th><th>Tiempo Respuesta</th><th>Acciones</th></tr></thead>
+                <tbody id="tbodyPendientes"></tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Pestaña: Mis Tareas -->
-    <div id="tabMisTareas" class="tab-content" style="display:none;">
+    <!-- ==================== PESTAÑA: RESPONDER SOLICITUDES ==================== -->
+    <div id="tabResponder" class="tab-content" style="display:none;">
         <div class="table-wrapper">
-            <input type="text" id="buscarMisTareas" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
-            <table><thead><tr><th>ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tbodyMisTareas"></tbody></table>
+            <input type="text" id="buscarResponder" placeholder="🔍 Buscar por ID, DOT o solicitante..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
+            <table>
+                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Estado</th><th>Asignado a</th><th>Acciones</th></tr></thead>
+                <tbody id="tbodyResponder"></tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Pestaña: Todas -->
+    <!-- ==================== PESTAÑA: TODAS ==================== -->
     <div id="tabTodas" class="tab-content" style="display:none;">
         <div class="table-wrapper">
             <input type="text" id="buscarTodas" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
-            <table><thead><tr><th>ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Asignado a</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tbodyTodas"></tbody></table>
+            <table>
+                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Asignado a</th><th>Estado</th><th>Respuesta</th><th>Acciones</th></tr></thead>
+                <tbody id="tbodyTodas"></tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<!-- Modal para atender solicitud -->
-<div id="modalAtender" class="modal">
+<!-- ==================== MODAL PARA RESPONDER ==================== -->
+<div id="modalResponder" class="modal">
     <div class="modal-content">
-        <h3>📌 Atender Solicitud</h3>
-        <div id="detalleSolicitud"></div>
+        <h3>✏️ Responder Solicitud</h3>
+        <div id="infoSolicitud" class="campo-info"></div>
         <hr>
-        <div class="form-group"><label>Solicitud ID</label><input type="text" id="atenderSolicitudId" readonly></div>
-        <div class="form-group"><label>Quien lo atiende *</label><input type="text" id="quienAtiende" placeholder="Tu nombre"></div>
-        <div class="form-group"><label>Status</label><select id="atenderStatus"><option>En proceso</option><option>Completado</option><option>Rechazado</option></select></div>
-        <div class="form-group"><label>COMMENTS</label><textarea id="atenderComments" rows="3" placeholder="Comentarios sobre la gestión..."></textarea></div>
-        <div class="form-group"><label>SUBJECT RESPUESTA</label><input type="text" id="subjectRespuesta" placeholder="Asunto de la respuesta"></div>
-        <button onclick="guardarAtencion()">💾 Guardar y enviar correo al solicitante</button>
+        <div class="form-group"><label>Solicitud ID</label><input type="text" id="respSolicitudId" readonly style="background:#f1f5f9;"></div>
+        <div class="form-group"><label>Quien lo atiende <span class="required">*</span></label><input type="text" id="quienAtiende" placeholder="Tu nombre completo"></div>
+        <div class="form-group"><label>Status <span class="required">*</span></label><select id="respStatus"><option value="En proceso">En proceso</option><option value="Completado">Completado</option><option value="Rechazado">Rechazado</option></select></div>
+        <div class="form-group"><label>COMMENTS</label><textarea id="respComments" rows="3" placeholder="Comentarios sobre la gestión..."></textarea></div>
+        <div class="form-group"><label>SUBJECT RESPUESTA <span class="required">*</span></label><input type="text" id="subjectRespuesta" placeholder="Asunto de la respuesta"></div>
+        <button onclick="guardarRespuesta()">💾 Guardar y enviar correo al solicitante</button>
         <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
     </div>
 </div>
 
 <script>
-    // Configurar EmailJS (REEMPLAZA CON TUS CREDENCIALES)
-    emailjs.init("TU_USER_ID_DE_EMAILJS"); // 👈 DEBES REGISTRARTE EN EMAILJS
-
+    // ==================== CONFIGURACIÓN EMAILJS ====================
+    // 🔴 IMPORTANTE: Reemplaza con tus credenciales de EmailJS
+    emailjs.init("TU_USER_ID_DE_EMAILJS");  // 👈 Coloca tu Public Key aquí
+    
+    // Variables globales
     let solicitudes = [];
-    let usuarioActual = localStorage.getItem('usuarioAtiende') || '';
     let solicitudActual = null;
 
+    // Cargar datos al iniciar
     function cargarDatos() {
-        const stored = localStorage.getItem('solicitudes_completas');
-        if (stored) solicitudes = JSON.parse(stored);
-        else solicitudes = [];
+        const stored = localStorage.getItem('solicitudes_db');
+        if (stored) {
+            solicitudes = JSON.parse(stored);
+        } else {
+            solicitudes = [];
+        }
         renderTablas();
         actualizarStats();
     }
 
     function guardarDatos() {
-        localStorage.setItem('solicitudes_completas', JSON.stringify(solicitudes));
+        localStorage.setItem('solicitudes_db', JSON.stringify(solicitudes));
         renderTablas();
         actualizarStats();
     }
 
     function actualizarStats() {
         const pendientes = solicitudes.filter(s => s.status === 'Pendiente').length;
-        const misTareas = solicitudes.filter(s => s.atendidoPor === usuarioActual && s.status !== 'Completado').length;
+        const enProceso = solicitudes.filter(s => s.status === 'En proceso').length;
         const total = solicitudes.length;
         document.getElementById('statsGrid').innerHTML = `
             <div class="stat-card">📋 Total: <div class="stat-number">${total}</div></div>
             <div class="stat-card">⏳ Pendientes: <div class="stat-number">${pendientes}</div></div>
-            <div class="stat-card">👤 Mis tareas: <div class="stat-number">${misTareas}</div></div>
+            <div class="stat-card">🔄 En proceso: <div class="stat-number">${enProceso}</div></div>
             <div class="stat-card">✅ Completadas: <div class="stat-number">${solicitudes.filter(s => s.status === 'Completado').length}</div></div>
         `;
     }
 
+    // Generar ID único
+    function generarId() {
+        return `SOL-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    }
+
+    // Crear nueva solicitud
     function crearSolicitud() {
         const email = document.getElementById('emailSolicitante').value;
-        if (!email) { mostrarNotificacion('❌ El email es obligatorio', true); return; }
-        
-        const nueva = {
-            id: Date.now(),
-            solicitudId: `SOL-${Date.now()}`,
+        if (!email) {
+            mostrarNotificacion('❌ El email es obligatorio', true);
+            return;
+        }
+
+        const nuevaSolicitud = {
+            id: generarId(),
             fechaSolicitud: document.getElementById('fechaSolicitud').value || new Date().toISOString().slice(0,10),
             dot: document.getElementById('dot').value,
             numCaso: document.getElementById('numCaso').value,
@@ -284,104 +315,161 @@
             subjectRespuesta: '',
             fechaCreacion: new Date().toLocaleString()
         };
-        solicitudes.unshift(nueva);
+
+        solicitudes.unshift(nuevaSolicitud);
         guardarDatos();
-        mostrarNotificacion('✅ Solicitud creada');
-        document.querySelectorAll('#tabNueva input, #tabNueva select, #tabNueva textarea').forEach(el => el.value = '');
+        
+        // Enviar correo de confirmación al solicitante
+        enviarCorreoConfirmacion(nuevaSolicitud);
+        
+        mostrarNotificacion('✅ Solicitud creada exitosamente');
+        
+        // Limpiar formulario
+        document.querySelectorAll('#tabNueva input, #tabNueva select, #tabNueva textarea').forEach(el => {
+            if (el.type !== 'submit' && el.type !== 'button') el.value = '';
+        });
         document.getElementById('fechaSolicitud').valueAsDate = new Date();
     }
 
-    function abrirAtender(id) {
-        solicitudActual = solicitudes.find(s => s.id === id);
-        if (!solicitudActual) return;
-        document.getElementById('atenderSolicitudId').value = solicitudActual.solicitudId;
-        document.getElementById('quienAtiende').value = solicitudActual.atendidoPor || '';
-        document.getElementById('atenderStatus').value = solicitudActual.status === 'Pendiente' ? 'En proceso' : solicitudActual.status;
-        document.getElementById('atenderComments').value = solicitudActual.comments || '';
-        document.getElementById('subjectRespuesta').value = solicitudActual.subjectRespuesta || '';
+    // Enviar correo de confirmación al crear solicitud
+    async function enviarCorreoConfirmacion(solicitud) {
+        const templateParams = {
+            to_email: solicitud.emailSolicitante,
+            solicitud_id: solicitud.id,
+            dot: solicitud.dot,
+            fecha: solicitud.fechaSolicitud,
+            tipo: solicitud.tipoSolicitud,
+            monto: solicitud.montoTransaccion,
+            tiempo_respuesta: solicitud.tiempoRespuesta,
+            mensaje: 'Hemos recibido tu solicitud y será atendida a la brevedad.'
+        };
         
-        const detalle = `
-            <p><strong>Solicitante:</strong> ${solicitudActual.emailSolicitante}</p>
-            <p><strong>DOT:</strong> ${solicitudActual.dot}</p>
-            <p><strong>Explicación:</strong> ${solicitudActual.explicacionDetallada?.substring(0,100)}</p>
-            <p><strong>Tiempo requerido:</strong> ${solicitudActual.tiempoRespuesta}</p>
-        `;
-        document.getElementById('detalleSolicitud').innerHTML = detalle;
-        document.getElementById('modalAtender').style.display = 'flex';
+        try {
+            await emailjs.send('TU_SERVICE_ID', 'TU_TEMPLATE_CONFIRMACION', templateParams);
+            console.log('Correo de confirmación enviado');
+        } catch (error) {
+            console.error('Error al enviar correo:', error);
+        }
     }
 
-    async function guardarAtencion() {
+    // Abrir modal para responder
+    function abrirResponder(id) {
+        solicitudActual = solicitudes.find(s => s.id === id);
         if (!solicitudActual) return;
-        const quien = document.getElementById('quienAtiende').value;
-        if (!quien) { mostrarNotificacion('❌ Ingresa quién atiende', true); return; }
         
-        usuarioActual = quien;
-        localStorage.setItem('usuarioAtiende', usuarioActual);
+        document.getElementById('respSolicitudId').value = solicitudActual.id;
+        document.getElementById('quienAtiende').value = solicitudActual.atendidoPor || '';
+        document.getElementById('respStatus').value = solicitudActual.status === 'Pendiente' ? 'En proceso' : solicitudActual.status;
+        document.getElementById('respComments').value = solicitudActual.comments || '';
+        document.getElementById('subjectRespuesta').value = solicitudActual.subjectRespuesta || '';
+        
+        const info = `
+            <strong>Solicitante:</strong> ${solicitudActual.emailSolicitante}<br>
+            <strong>DOT:</strong> ${solicitudActual.dot}<br>
+            <strong>Monto:</strong> $${solicitudActual.montoTransaccion}<br>
+            <strong>Explicación:</strong> ${solicitudActual.explicacionDetallada?.substring(0, 100)}...
+        `;
+        document.getElementById('infoSolicitud').innerHTML = info;
+        
+        document.getElementById('modalResponder').style.display = 'flex';
+    }
+
+    // Guardar respuesta y enviar correo
+    async function guardarRespuesta() {
+        if (!solicitudActual) return;
+        
+        const quien = document.getElementById('quienAtiende').value;
+        if (!quien) {
+            mostrarNotificacion('❌ Ingresa quién atiende la solicitud', true);
+            return;
+        }
         
         solicitudActual.atendidoPor = quien;
-        solicitudActual.status = document.getElementById('atenderStatus').value;
-        solicitudActual.comments = document.getElementById('atenderComments').value;
+        solicitudActual.status = document.getElementById('respStatus').value;
+        solicitudActual.comments = document.getElementById('respComments').value;
         solicitudActual.subjectRespuesta = document.getElementById('subjectRespuesta').value;
         solicitudActual.fechaRespuesta = new Date().toLocaleString();
         
         guardarDatos();
         
         // Enviar correo al solicitante
-        await enviarCorreo(solicitudActual);
+        await enviarCorreoRespuesta(solicitudActual);
         
         cerrarModal();
-        mostrarNotificacion('✅ Solicitud actualizada y correo enviado');
+        mostrarNotificacion('✅ Respuesta guardada y correo enviado al solicitante');
     }
 
-    async function enviarCorreo(solicitud) {
-        // Configuración EmailJS (necesitas crear cuenta en emailjs.com)
+    // Enviar correo de respuesta
+    async function enviarCorreoRespuesta(solicitud) {
         const templateParams = {
             to_email: solicitud.emailSolicitante,
-            subject_respuesta: solicitud.subjectRespuesta || 'Actualización de tu solicitud',
+            subject_respuesta: solicitud.subjectRespuesta,
             comments: solicitud.comments,
             status: solicitud.status,
-            solicitud_id: solicitud.solicitudId,
-            dot: solicitud.dot
+            solicitud_id: solicitud.id,
+            dot: solicitud.dot,
+            atendido_por: solicitud.atendidoPor
         };
         
         try {
-            await emailjs.send('TU_SERVICE_ID', 'TU_TEMPLATE_ID', templateParams);
-            console.log('Correo enviado');
+            await emailjs.send('TU_SERVICE_ID', 'TU_TEMPLATE_RESPUESTA', templateParams);
+            console.log('Correo de respuesta enviado');
         } catch (error) {
             console.error('Error al enviar correo:', error);
-            mostrarNotificacion('⚠️ Solicitud guardada pero no se pudo enviar el correo', true);
+            mostrarNotificacion('⚠️ Solicitud guardada pero hubo error al enviar el correo', true);
         }
     }
 
+    // Renderizar todas las tablas
     function renderTablas() {
-        // Pendientes
+        // Tabla de pendientes (solo las que están Pendiente)
         const pendientes = solicitudes.filter(s => s.status === 'Pendiente');
         const busqPend = document.getElementById('buscarPendientes')?.value.toLowerCase() || '';
-        const filtPend = pendientes.filter(s => s.solicitudId.toLowerCase().includes(busqPend) || s.dot.toLowerCase().includes(busqPend));
+        const filtPend = pendientes.filter(s => s.id.toLowerCase().includes(busqPend) || s.dot.toLowerCase().includes(busqPend));
         document.getElementById('tbodyPendientes').innerHTML = filtPend.map(s => `
-            <tr><td>${s.solicitudId}</td><td>${s.fechaSolicitud}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td><td>${s.tipoSolicitud}</td><td>$${s.montoTransaccion}</td><td>${s.tiempoRespuesta}</td>
-            <td><button class="btn-sm" onclick="abrirAtender(${s.id})">📌 Atender</button></td></tr>
+            <tr>
+                <td>${s.id}</td>
+                <td>${s.fechaSolicitud}</td>
+                <td>${s.dot}</td>
+                <td>${s.emailSolicitante}</td>
+                <td>${s.tipoSolicitud}</td>
+                <td>$${s.montoTransaccion}</td>
+                <td>${s.tiempoRespuesta}</td>
+                <td><button class="btn-sm" onclick="abrirResponder(${s.id})">✏️ Responder</button></td>
+            </tr>
         `).join('') || '<tr><td colspan="8">✨ No hay solicitudes pendientes</td></tr>';
         
-        // Mis Tareas
-        const misTareas = solicitudes.filter(s => s.atendidoPor === usuarioActual && s.status !== 'Completado');
-        const busqMis = document.getElementById('buscarMisTareas')?.value.toLowerCase() || '';
-        const filtMis = misTareas.filter(s => s.solicitudId.toLowerCase().includes(busqMis));
-        document.getElementById('tbodyMisTareas').innerHTML = filtMis.map(s => `
-            <tr><td>${s.solicitudId}</td><td>${s.fechaSolicitud}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td>
-            <td><span class="estado estado-proceso">${s.status}</span></td>
-            <td><button class="btn-sm" onclick="abrirAtender(${s.id})">✏️ Editar</button></td></tr>
-        `).join('') || '<tr><td colspan="6">📭 No tienes tareas asignadas</td></tr>';
+        // Tabla para responder (todas menos Completado)
+        const porResponder = solicitudes.filter(s => s.status !== 'Completado');
+        const busqResp = document.getElementById('buscarResponder')?.value.toLowerCase() || '';
+        const filtResp = porResponder.filter(s => s.id.toLowerCase().includes(busqResp) || s.dot.toLowerCase().includes(busqResp));
+        document.getElementById('tbodyResponder').innerHTML = filtResp.map(s => `
+            <tr>
+                <td>${s.id}</td>
+                <td>${s.fechaSolicitud}</td>
+                <td>${s.dot}</td>
+                <td>${s.emailSolicitante}</td>
+                <td><span class="estado ${s.status === 'Pendiente' ? 'estado-pendiente' : 'estado-proceso'}">${s.status}</span></td>
+                <td>${s.atendidoPor || '—'}</td>
+                <td><button class="btn-sm" onclick="abrirResponder(${s.id})">✏️ Responder</button></td>
+            </tr>
+        `).join('') || '<tr><td colspan="7">📭 No hay solicitudes para responder</td></tr>';
         
-        // Todas
+        // Tabla de todas
         const busqTodas = document.getElementById('buscarTodas')?.value.toLowerCase() || '';
-        const filtTodas = solicitudes.filter(s => s.solicitudId.toLowerCase().includes(busqTodas));
+        const filtTodas = solicitudes.filter(s => s.id.toLowerCase().includes(busqTodas));
         document.getElementById('tbodyTodas').innerHTML = filtTodas.map(s => `
-            <tr><td>${s.solicitudId}</td><td>${s.fechaSolicitud}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td>
-            <td>${s.atendidoPor || '—'}</td>
-            <td><span class="estado ${s.status === 'Pendiente' ? 'estado-pendiente' : (s.status === 'Completado' ? 'estado-completado' : 'estado-proceso')}">${s.status}</span></td>
-            <td><button class="btn-sm" onclick="abrirAtender(${s.id})">👁️ Ver</button></td></tr>
-        `).join('') || '<tr><td colspan="7">📭 No hay solicitudes</td></tr>';
+            <tr>
+                <td>${s.id}</td>
+                <td>${s.fechaSolicitud}</td>
+                <td>${s.dot}</td>
+                <td>${s.emailSolicitante}</td>
+                <td>${s.atendidoPor || '—'}</td>
+                <td><span class="estado ${s.status === 'Pendiente' ? 'estado-pendiente' : (s.status === 'Completado' ? 'estado-completado' : 'estado-proceso')}">${s.status}</span></td>
+                <td>${s.subjectRespuesta?.substring(0, 30) || '—'}</td>
+                <td><button class="btn-sm" onclick="abrirResponder(${s.id})">👁️ Ver</button></td>
+            </tr>
+        `).join('') || '<tr><td colspan="8">📭 No hay solicitudes</td></tr>';
     }
 
     function mostrarNotificacion(msg, error = false) {
@@ -394,7 +482,7 @@
     }
 
     function cerrarModal() {
-        document.getElementById('modalAtender').style.display = 'none';
+        document.getElementById('modalResponder').style.display = 'none';
         solicitudActual = null;
     }
 
@@ -405,17 +493,17 @@
             btn.classList.add('active');
             const tab = btn.dataset.tab;
             document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-            if (tab === 'nueva') document.getElementById('tabNueva').style.display = 'block';
-            if (tab === 'pendientes') document.getElementById('tabPendientes').style.display = 'block';
-            if (tab === 'misTareas') document.getElementById('tabMisTareas').style.display = 'block';
-            if (tab === 'todas') document.getElementById('tabTodas').style.display = 'block';
+            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).style.display = 'block';
             renderTablas();
         });
     });
     
+    // Inicializar fecha actual
     document.getElementById('fechaSolicitud').valueAsDate = new Date();
+    document.getElementById('fechaTransaccion').valueAsDate = new Date();
+    
     cargarDatos();
-    window.onclick = (e) => { if (e.target === document.getElementById('modalAtender')) cerrarModal(); };
+    window.onclick = (e) => { if (e.target === document.getElementById('modalResponder')) cerrarModal(); };
 </script>
 </body>
 </html>
