@@ -115,7 +115,7 @@
             background: white;
             border-radius: 24px;
             padding: 24px;
-            max-width: 600px;
+            max-width: 500px;
             width: 90%;
         }
         .notificacion {
@@ -134,7 +134,7 @@
             to { transform: translateX(0); opacity: 1; }
         }
         @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
-        .campo-info {
+        .info-solicitud {
             background: #f1f5f9;
             padding: 12px;
             border-radius: 12px;
@@ -154,7 +154,7 @@
 
     <div class="tabs">
         <button class="tab-btn active" data-tab="nueva">📝 Nueva Solicitud</button>
-        <button class="tab-btn" data-tab="pendientes">⏳ Pendientes</button>
+        <button class="tab-btn" data-tab="pendientes">⏳ Solicitudes Pendientes</button>
         <button class="tab-btn" data-tab="responder">✏️ Responder Solicitudes</button>
         <button class="tab-btn" data-tab="todas">📋 Todas las Solicitudes</button>
     </div>
@@ -187,12 +187,12 @@
         </div>
     </div>
 
-    <!-- ==================== PESTAÑA: PENDIENTES ==================== -->
+    <!-- ==================== PESTAÑA: SOLICITUDES PENDIENTES ==================== -->
     <div id="tabPendientes" class="tab-content" style="display:none;">
         <div class="table-wrapper">
-            <input type="text" id="buscarPendientes" placeholder="🔍 Buscar por ID, DOT o solicitante..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
+            <input type="text" id="buscarPendientes" placeholder="🔍 Buscar por ID, DOT o email..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
             <table>
-                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Email</th><th>Tipo</th><th>Monto</th><th>Tiempo Respuesta</th><th>Acciones</th></tr></thead>
+                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Email</th><th>Tipo</th><th>Monto</th><th>Tiempo Respuesta</th></tr></thead>
                 <tbody id="tbodyPendientes"></tbody>
             </table>
         </div>
@@ -201,31 +201,31 @@
     <!-- ==================== PESTAÑA: RESPONDER SOLICITUDES ==================== -->
     <div id="tabResponder" class="tab-content" style="display:none;">
         <div class="table-wrapper">
-            <input type="text" id="buscarResponder" placeholder="🔍 Buscar por ID, DOT o solicitante..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
+            <input type="text" id="buscarResponder" placeholder="🔍 Buscar por ID, DOT o email..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
             <table>
-                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Estado</th><th>Asignado a</th><th>Acciones</th></tr></thead>
+                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Estado</th><th>Acciones</th></tr></thead>
                 <tbody id="tbodyResponder"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- ==================== PESTAÑA: TODAS ==================== -->
+    <!-- ==================== PESTAÑA: TODAS LAS SOLICITUDES ==================== -->
     <div id="tabTodas" class="tab-content" style="display:none;">
         <div class="table-wrapper">
             <input type="text" id="buscarTodas" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
             <table>
-                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Asignado a</th><th>Estado</th><th>Respuesta</th><th>Acciones</th></tr></thead>
+                <thead><tr><th>Solicitud ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Atendido por</th><th>Estado</th><th>Respuesta</th></tr></thead>
                 <tbody id="tbodyTodas"></tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- ==================== MODAL PARA RESPONDER ==================== -->
+<!-- ==================== MODAL PARA RESPONDER (SOLO CAMPOS DE RESPUESTA) ==================== -->
 <div id="modalResponder" class="modal">
     <div class="modal-content">
         <h3>✏️ Responder Solicitud</h3>
-        <div id="infoSolicitud" class="campo-info"></div>
+        <div id="infoSolicitud" class="info-solicitud"></div>
         <hr>
         <div class="form-group"><label>Solicitud ID</label><input type="text" id="respSolicitudId" readonly style="background:#f1f5f9;"></div>
         <div class="form-group"><label>Quien lo atiende <span class="required">*</span></label><input type="text" id="quienAtiende" placeholder="Tu nombre completo"></div>
@@ -281,7 +281,7 @@
         return `SOL-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     }
 
-    // Crear nueva solicitud
+    // ==================== CREAR NUEVA SOLICITUD ====================
     function crearSolicitud() {
         const email = document.getElementById('emailSolicitante').value;
         if (!email) {
@@ -322,13 +322,14 @@
         // Enviar correo de confirmación al solicitante
         enviarCorreoConfirmacion(nuevaSolicitud);
         
-        mostrarNotificacion('✅ Solicitud creada exitosamente');
+        mostrarNotificacion('✅ Solicitud creada exitosamente. Se ha enviado un correo de confirmación.');
         
         // Limpiar formulario
         document.querySelectorAll('#tabNueva input, #tabNueva select, #tabNueva textarea').forEach(el => {
             if (el.type !== 'submit' && el.type !== 'button') el.value = '';
         });
         document.getElementById('fechaSolicitud').valueAsDate = new Date();
+        document.getElementById('fechaTransaccion').valueAsDate = new Date();
     }
 
     // Enviar correo de confirmación al crear solicitud
@@ -352,7 +353,7 @@
         }
     }
 
-    // Abrir modal para responder
+    // ==================== RESPONDER SOLICITUD ====================
     function abrirResponder(id) {
         solicitudActual = solicitudes.find(s => s.id === id);
         if (!solicitudActual) return;
@@ -364,7 +365,7 @@
         document.getElementById('subjectRespuesta').value = solicitudActual.subjectRespuesta || '';
         
         const info = `
-            <strong>Solicitante:</strong> ${solicitudActual.emailSolicitante}<br>
+            <strong>Email solicitante:</strong> ${solicitudActual.emailSolicitante}<br>
             <strong>DOT:</strong> ${solicitudActual.dot}<br>
             <strong>Monto:</strong> $${solicitudActual.montoTransaccion}<br>
             <strong>Explicación:</strong> ${solicitudActual.explicacionDetallada?.substring(0, 100)}...
@@ -384,15 +385,21 @@
             return;
         }
         
+        const subjectResp = document.getElementById('subjectRespuesta').value;
+        if (!subjectResp) {
+            mostrarNotificacion('❌ Ingresa el SUBJECT RESPUESTA', true);
+            return;
+        }
+        
         solicitudActual.atendidoPor = quien;
         solicitudActual.status = document.getElementById('respStatus').value;
         solicitudActual.comments = document.getElementById('respComments').value;
-        solicitudActual.subjectRespuesta = document.getElementById('subjectRespuesta').value;
+        solicitudActual.subjectRespuesta = subjectResp;
         solicitudActual.fechaRespuesta = new Date().toLocaleString();
         
         guardarDatos();
         
-        // Enviar correo al solicitante
+        // Enviar correo de respuesta al solicitante
         await enviarCorreoRespuesta(solicitudActual);
         
         cerrarModal();
@@ -420,9 +427,9 @@
         }
     }
 
-    // Renderizar todas las tablas
+    // ==================== RENDERIZAR TABLAS ====================
     function renderTablas() {
-        // Tabla de pendientes (solo las que están Pendiente)
+        // Tabla de pendientes (solo las que están Pendiente - solo lectura)
         const pendientes = solicitudes.filter(s => s.status === 'Pendiente');
         const busqPend = document.getElementById('buscarPendientes')?.value.toLowerCase() || '';
         const filtPend = pendientes.filter(s => s.id.toLowerCase().includes(busqPend) || s.dot.toLowerCase().includes(busqPend));
@@ -435,11 +442,10 @@
                 <td>${s.tipoSolicitud}</td>
                 <td>$${s.montoTransaccion}</td>
                 <td>${s.tiempoRespuesta}</td>
-                <td><button class="btn-sm" onclick="abrirResponder(${s.id})">✏️ Responder</button></td>
             </tr>
-        `).join('') || '<tr><td colspan="8">✨ No hay solicitudes pendientes</td></tr>';
+        `).join('') || '<tr><td colspan="7">✨ No hay solicitudes pendientes</td></tr>';
         
-        // Tabla para responder (todas menos Completado)
+        // Tabla para responder (todas las que no están completadas)
         const porResponder = solicitudes.filter(s => s.status !== 'Completado');
         const busqResp = document.getElementById('buscarResponder')?.value.toLowerCase() || '';
         const filtResp = porResponder.filter(s => s.id.toLowerCase().includes(busqResp) || s.dot.toLowerCase().includes(busqResp));
@@ -450,10 +456,9 @@
                 <td>${s.dot}</td>
                 <td>${s.emailSolicitante}</td>
                 <td><span class="estado ${s.status === 'Pendiente' ? 'estado-pendiente' : 'estado-proceso'}">${s.status}</span></td>
-                <td>${s.atendidoPor || '—'}</td>
-                <td><button class="btn-sm" onclick="abrirResponder(${s.id})">✏️ Responder</button></td>
+                <td><button class="btn-sm" onclick="abrirResponder('${s.id}')">✏️ Responder</button></td>
             </tr>
-        `).join('') || '<tr><td colspan="7">📭 No hay solicitudes para responder</td></tr>';
+        `).join('') || '<tr><td colspan="6">📭 No hay solicitudes para responder</td></tr>';
         
         // Tabla de todas
         const busqTodas = document.getElementById('buscarTodas')?.value.toLowerCase() || '';
@@ -467,9 +472,8 @@
                 <td>${s.atendidoPor || '—'}</td>
                 <td><span class="estado ${s.status === 'Pendiente' ? 'estado-pendiente' : (s.status === 'Completado' ? 'estado-completado' : 'estado-proceso')}">${s.status}</span></td>
                 <td>${s.subjectRespuesta?.substring(0, 30) || '—'}</td>
-                <td><button class="btn-sm" onclick="abrirResponder(${s.id})">👁️ Ver</button></td>
             </tr>
-        `).join('') || '<tr><td colspan="8">📭 No hay solicitudes</td></tr>';
+        `).join('') || '<tr><td colspan="7">📭 No hay solicitudes</td></tr>';
     }
 
     function mostrarNotificacion(msg, error = false) {
@@ -498,7 +502,7 @@
         });
     });
     
-    // Inicializar fecha actual
+    // Inicializar fechas
     document.getElementById('fechaSolicitud').valueAsDate = new Date();
     document.getElementById('fechaTransaccion').valueAsDate = new Date();
     
