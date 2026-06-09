@@ -3,145 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión de Solicitudes - Panel completo</title>
+    <title>Panel de Solicitudes - Gestión en Equipo</title>
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
-            margin: 0;
+            background: #f1f5f9;
             padding: 20px;
+            transition: 0.3s;
         }
+
+        body.dark {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
-        /* Tarjetas */
-        .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            padding: 24px;
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
+
         h1 {
-            margin: 0 0 8px 0;
-            color: #1a73e8;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        h2 {
-            margin: 0 0 16px 0;
-            color: #333;
-            font-size: 1.4rem;
-            border-left: 4px solid #1a73e8;
-            padding-left: 12px;
+
+        body.dark h1 {
+            color: #60a5fa;
         }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        .campo {
-            margin-bottom: 16px;
-        }
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #555;
-            font-size: 13px;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 70px;
-        }
-        button {
-            background: #1a73e8;
+
+        .theme-btn {
+            background: #334155;
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 10px;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 14px;
+        }
+
+        /* Tarjetas de estadísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        body.dark .stat-card {
+            background: #1e293b;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        /* Pestañas */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            cursor: pointer;
             font-weight: 600;
             transition: 0.2s;
         }
+
+        body.dark .tab-btn {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .tab-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* Panel de formulario */
+        .form-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        body.dark .form-panel {
+            background: #1e293b;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        body.dark label {
+            color: #94a3b8;
+        }
+
+        input, select, textarea {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 14px;
+            background: white;
+        }
+
+        body.dark input, body.dark select, body.dark textarea {
+            background: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
         button:hover {
-            background: #1557b0;
+            background: #1d4ed8;
             transform: scale(1.02);
         }
+
         .btn-secondary {
-            background: #5f6368;
+            background: #64748b;
         }
-        .btn-secondary:hover {
-            background: #3c4043;
+
+        /* Tabla */
+        .table-wrapper {
+            overflow-x: auto;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .btn-success {
-            background: #0d9488;
+
+        body.dark .table-wrapper {
+            background: #1e293b;
         }
-        .btn-warning {
-            background: #e67e22;
-        }
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-        .filtros {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-        .filtros input, .filtros select {
-            width: auto;
-            flex: 1;
-            min-width: 150px;
-        }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
+
         th, td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #e2e8f0;
         }
+
+        body.dark th, body.dark td {
+            border-bottom-color: #334155;
+        }
+
         th {
-            background: #f8f9fa;
+            background: #f8fafc;
             font-weight: 600;
-            color: #333;
-            position: sticky;
-            top: 0;
         }
-        tr:hover {
-            background: #f8f9fa;
+
+        body.dark th {
+            background: #0f172a;
         }
+
         .estado {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
         }
-        .estado-pendiente { background: #fed7aa; color: #c2410c; }
-        .estado-proceso { background: #bfdbfe; color: #1e40af; }
-        .estado-completado { background: #bbf7d0; color: #166534; }
-        .estado-rechazado { background: #fecaca; color: #991b1b; }
+
+        .estado-pendiente { background: #fef3c7; color: #b45309; }
+        .estado-proceso { background: #dbeafe; color: #1e40af; }
+        .estado-completado { background: #dcfce7; color: #166534; }
+
+        body.dark .estado-pendiente { background: #78350f; color: #fde68a; }
+        body.dark .estado-proceso { background: #1e3a8a; color: #93c5fd; }
+        body.dark .estado-completado { background: #14532d; color: #86efac; }
+
         .acciones {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px;
+        }
+
+        .btn-tomar {
+            background: #10b981;
+        }
+
+        .btn-tomar:hover {
+            background: #059669;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -154,348 +269,301 @@
             align-items: center;
             z-index: 1000;
         }
+
         .modal-content {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 24px;
-            max-width: 600px;
+            max-width: 500px;
             width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
         }
-        .modal-content h3 {
-            margin-top: 0;
+
+        body.dark .modal-content {
+            background: #1e293b;
         }
-        .cerrar-modal {
-            float: right;
-            font-size: 28px;
-            cursor: pointer;
-        }
-        .tabla-wrapper {
-            overflow-x: auto;
-        }
-        .stats {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 12px;
+
+        .notificacion {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
             padding: 12px 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            flex: 1;
-            text-align: center;
+            border-radius: 30px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
         }
-        .stat-number {
-            font-size: 28px;
-            font-weight: bold;
-            color: #1a73e8;
-        }
-        @media (max-width: 768px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            .acciones {
-                flex-direction: column;
-            }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- Panel de estadísticas -->
-    <div class="stats" id="stats">
-        <div class="stat-card">📋 Total: <span class="stat-number" id="totalCount">0</span></div>
-        <div class="stat-card">⏳ Pendientes: <span class="stat-number" id="pendienteCount">0</span></div>
-        <div class="stat-card">🔄 En proceso: <span class="stat-number" id="procesoCount">0</span></div>
-        <div class="stat-card">✅ Completados: <span class="stat-number" id="completadoCount">0</span></div>
+    <div class="header">
+        <h1>📋 Panel de Solicitudes - Gestión en Equipo</h1>
+        <button class="theme-btn" onclick="toggleTheme()">🌓 Modo oscuro/claro</button>
     </div>
 
-    <!-- Formulario de creación -->
-    <div class="card">
-        <h2>➕ Nueva solicitud</h2>
-        <div class="grid-2">
-            <div class="campo"><label>Solicitud ID *</label><input type="text" id="solicitud" placeholder="Ej: SOL-001"></div>
-            <div class="campo"><label>Persona que solicita *</label><input type="text" id="persona" placeholder="Nombre completo"></div>
-            <div class="campo"><label>Fecha solicitud</label><input type="date" id="fecha"></div>
-            <div class="campo"><label>Email</label><input type="email" id="email" placeholder="correo@ejemplo.com"></div>
-            <div class="campo full-width"><label>Explicación detallada</label><textarea id="explicacion" placeholder="Describa lo que necesita..."></textarea></div>
-            <div class="campo"><label>DOT</label><input type="text" id="dot"></div>
-            <div class="campo"><label>Número de caso</label><input type="text" id="caso"></div>
-            <div class="campo"><label>Tipo transacción</label><select id="tipoTransaccion"><option>Compra</option><option>Reembolso</option><option>Pago proveedor</option></select></div>
-            <div class="campo"><label>Monto (USD)</label><input type="number" id="monto" step="0.01"></div>
-            <div class="campo"><label>Departamento</label><input type="text" id="departamento"></div>
-        </div>
-        <button onclick="crearSolicitud()">📌 Crear solicitud</button>
-        <button class="btn-secondary" onclick="limpiarFormulario()">🗑️ Limpiar</button>
+    <!-- Estadísticas -->
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <!-- Pestañas -->
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="pendientes">⏳ Pendientes (nadie las ha tomado)</button>
+        <button class="tab-btn" data-tab="misSolicitudes">👤 Mis solicitudes asignadas</button>
+        <button class="tab-btn" data-tab="todas">📋 Todas las solicitudes</button>
+        <button class="tab-btn" data-tab="nueva">➕ Nueva solicitud</button>
     </div>
 
-    <!-- Tabla de solicitudes -->
-    <div class="card">
-        <h2>📋 Listado de solicitudes</h2>
-        <div class="filtros">
-            <input type="text" id="buscar" placeholder="🔍 Buscar por ID, persona o DOT..." onkeyup="renderTabla()">
-            <select id="filtroEstado" onchange="renderTabla()">
-                <option value="">Todos los estados</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="En proceso">En proceso</option>
-                <option value="Completado">Completado</option>
-                <option value="Rechazado">Rechazado</option>
-            </select>
-            <button onclick="exportarExcel()">📊 Exportar a Excel</button>
-        </div>
-        <div class="tabla-wrapper">
-            <table id="tablaSolicitudes">
-                <thead>
-                    <tr><th>ID</th><th>Solicitante</th><th>Fecha</th><th>DOT</th><th>Monto</th><th>Estado</th><th>Asignado a</th><th>Acciones</th></tr>
-                </thead>
-                <tbody id="tbodySolicitudes"></tbody>
+    <!-- Contenido de pestañas -->
+    <div id="tabPendientes" class="tab-content">
+        <div class="table-wrapper">
+            <input type="text" id="buscarPendientes" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
+            <table>
+                <thead><tr><th>ID</th><th>Solicitante</th><th>DOT</th><th>Monto</th><th>Explicación</th><th>Acciones</th></tr></thead>
+                <tbody id="tbodyPendientes"></tbody>
             </table>
+        </div>
+    </div>
+
+    <div id="tabMisSolicitudes" class="tab-content" style="display:none;">
+        <div class="table-wrapper">
+            <input type="text" id="buscarMisSolicitudes" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
+            <table>
+                <thead><tr><th>ID</th><th>Solicitante</th><th>DOT</th><th>Estado</th><th>Respuesta</th><th>Acciones</th></tr></thead>
+                <tbody id="tbodyMisSolicitudes"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="tabTodas" class="tab-content" style="display:none;">
+        <div class="table-wrapper">
+            <input type="text" id="buscarTodas" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
+            <table>
+                <thead><tr><th>ID</th><th>Solicitante</th><th>Asignada a</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+                <tbody id="tbodyTodas"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="tabNueva" class="tab-content" style="display:none;">
+        <div class="form-panel">
+            <h3>➕ Crear nueva solicitud</h3>
+            <div class="form-grid">
+                <div class="form-group"><label>Solicitud ID *</label><input type="text" id="nuevoId" placeholder="Ej: SOL-001"></div>
+                <div class="form-group"><label>Persona que solicita *</label><input type="text" id="nuevoPersona" placeholder="Nombre"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="nuevoEmail"></div>
+                <div class="form-group"><label>DOT</label><input type="text" id="nuevoDot"></div>
+                <div class="form-group"><label>Tipo transacción</label><select id="nuevoTipo"><option>Compra</option><option>Reembolso</option><option>Pago</option></select></div>
+                <div class="form-group"><label>Monto</label><input type="number" id="nuevoMonto" step="0.01"></div>
+                <div class="form-group"><label>Departamento</label><input type="text" id="nuevoDepto"></div>
+                <div class="form-group full-width"><label>Explicación detallada</label><textarea id="nuevoExplicacion" rows="3"></textarea></div>
+            </div>
+            <button onclick="crearSolicitud()">📌 Crear solicitud</button>
         </div>
     </div>
 </div>
 
-<!-- Modal para ver detalles -->
-<div id="modalDetalle" class="modal">
+<!-- Modal para responder -->
+<div id="modalRespuesta" class="modal">
     <div class="modal-content">
-        <span class="cerrar-modal" onclick="cerrarModal()">&times;</span>
-        <h3>📄 Detalle de solicitud</h3>
-        <div id="detalleBody"></div>
-        <hr>
-        <label>Comentario / Respuesta:</label>
-        <textarea id="respuestaComentario" rows="3" style="width:100%"></textarea>
-        <button onclick="guardarRespuesta()" style="margin-top:10px">💬 Guardar respuesta</button>
+        <h3>💬 Responder solicitud</h3>
+        <p><strong id="respuestaId"></strong></p>
+        <label>Tu respuesta / comentario:</label>
+        <textarea id="respuestaTexto" rows="4" style="width:100%; margin:10px 0;"></textarea>
+        <label>Cambiar estado:</label>
+        <select id="respuestaEstado" style="width:100%; margin-bottom:10px;">
+            <option value="En proceso">En proceso</option>
+            <option value="Completado">Completado</option>
+            <option value="Pendiente">Pendiente</option>
+        </select>
+        <button onclick="guardarRespuesta()">💾 Guardar respuesta</button>
+        <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
     </div>
 </div>
 
 <script>
     let solicitudes = [];
-    let solicitudActualId = null;
+    let usuarioActual = localStorage.getItem('usuarioActual') || prompt('👋 ¿Cómo te llamas? (tu nombre aparecerá al tomar solicitudes)', 'Usuario') || 'Usuario';
+    localStorage.setItem('usuarioActual', usuarioActual);
+
+    let solicitudEnRespuesta = null;
 
     function cargarDatos() {
-        const stored = localStorage.getItem('solicitudes_sistema_v2');
+        const stored = localStorage.getItem('solicitudes_equipo');
         if (stored) {
             solicitudes = JSON.parse(stored);
         } else {
             solicitudes = [];
         }
+        renderTablas();
         actualizarStats();
-        renderTabla();
     }
 
-    function guardarEnLocal() {
-        localStorage.setItem('solicitudes_sistema_v2', JSON.stringify(solicitudes));
+    function guardarDatos() {
+        localStorage.setItem('solicitudes_equipo', JSON.stringify(solicitudes));
+        renderTablas();
         actualizarStats();
-        renderTabla();
+        mostrarNotificacion('📁 Datos guardados');
     }
 
     function actualizarStats() {
-        document.getElementById('totalCount').innerText = solicitudes.length;
-        document.getElementById('pendienteCount').innerText = solicitudes.filter(s => s.status === 'Pendiente').length;
-        document.getElementById('procesoCount').innerText = solicitudes.filter(s => s.status === 'En proceso').length;
-        document.getElementById('completadoCount').innerText = solicitudes.filter(s => s.status === 'Completado').length;
-    }
-
-    function crearSolicitud() {
-        const persona = document.getElementById('persona').value.trim();
-        const solicitudId = document.getElementById('solicitud').value.trim();
-        if (!persona && !solicitudId) {
-            alert('❌ Complete al menos "Persona que solicita" o "Solicitud ID"');
-            return;
-        }
-
-        const nueva = {
-            id: Date.now(),
-            solicitud: solicitudId || `SOL-${Date.now()}`,
-            persona: persona,
-            fecha: document.getElementById('fecha').value || new Date().toISOString().slice(0,10),
-            email: document.getElementById('email').value,
-            explicacion: document.getElementById('explicacion').value,
-            dot: document.getElementById('dot').value,
-            caso: document.getElementById('caso').value,
-            tipoTransaccion: document.getElementById('tipoTransaccion').value,
-            monto: document.getElementById('monto').value,
-            departamento: document.getElementById('departamento').value,
-            status: 'Pendiente',
-            asignadoA: '',
-            comentarioRespuesta: '',
-            fechaCreacion: new Date().toLocaleString()
-        };
-        solicitudes.unshift(nueva);
-        guardarEnLocal();
-        limpiarFormulario();
-        alert('✅ Solicitud creada correctamente');
-    }
-
-    function limpiarFormulario() {
-        document.getElementById('solicitud').value = '';
-        document.getElementById('persona').value = '';
-        document.getElementById('fecha').valueAsDate = new Date();
-        document.getElementById('email').value = '';
-        document.getElementById('explicacion').value = '';
-        document.getElementById('dot').value = '';
-        document.getElementById('caso').value = '';
-        document.getElementById('tipoTransaccion').value = 'Compra';
-        document.getElementById('monto').value = '';
-        document.getElementById('departamento').value = '';
+        const pendientes = solicitudes.filter(s => s.status === 'Pendiente' && !s.asignadoA).length;
+        const misTareas = solicitudes.filter(s => s.asignadoA === usuarioActual && s.status !== 'Completado').length;
+        const total = solicitudes.length;
+        document.getElementById('statsGrid').innerHTML = `
+            <div class="stat-card">📋 Total solicitudes: <div class="stat-number">${total}</div></div>
+            <div class="stat-card">⏳ Pendientes por tomar: <div class="stat-number">${pendientes}</div></div>
+            <div class="stat-card">👤 Mis tareas activas: <div class="stat-number">${misTareas}</div></div>
+            <div class="stat-card">✅ Completadas: <div class="stat-number">${solicitudes.filter(s => s.status === 'Completado').length}</div></div>
+        `;
     }
 
     function tomarSolicitud(id) {
         const solicitud = solicitudes.find(s => s.id === id);
-        if (solicitud && solicitud.status === 'Pendiente') {
+        if (solicitud && solicitud.status === 'Pendiente' && !solicitud.asignadoA) {
+            solicitud.asignadoA = usuarioActual;
             solicitud.status = 'En proceso';
-            solicitud.asignadoA = prompt('📌 Asignar a (nombre de quien toma la solicitud):', solicitud.asignadoA || '');
-            guardarEnLocal();
-        } else if (solicitud.status === 'En proceso') {
-            alert('Esta solicitud ya está en proceso');
+            solicitud.fechaAsignacion = new Date().toLocaleString();
+            guardarDatos();
+            mostrarNotificacion(`✅ Tomaste la solicitud ${solicitud.solicitud}`);
         } else {
-            alert('Solicitud no disponible para tomar');
+            mostrarNotificacion('⚠️ Esta solicitud ya fue tomada', 'error');
         }
     }
 
-    function cambiarEstado(id, nuevoEstado) {
+    function abrirRespuesta(id) {
+        solicitudEnRespuesta = id;
         const solicitud = solicitudes.find(s => s.id === id);
-        if (solicitud) {
-            solicitud.status = nuevoEstado;
-            if (nuevoEstado === 'Completado') {
-                solicitud.fechaCompletado = new Date().toLocaleString();
-            }
-            guardarEnLocal();
-        }
-    }
-
-    function verDetalle(id) {
-        const solicitud = solicitudes.find(s => s.id === id);
-        if (!solicitud) return;
-        solicitudActualId = id;
-        const detalle = `
-            <p><strong>Solicitud ID:</strong> ${solicitud.solicitud}</p>
-            <p><strong>Solicitante:</strong> ${solicitud.persona}</p>
-            <p><strong>Email:</strong> ${solicitud.email || '-'}</p>
-            <p><strong>Fecha solicitud:</strong> ${solicitud.fecha}</p>
-            <p><strong>Explicación:</strong> ${solicitud.explicacion || '-'}</p>
-            <p><strong>DOT:</strong> ${solicitud.dot || '-'}</p>
-            <p><strong>N° Caso:</strong> ${solicitud.caso || '-'}</p>
-            <p><strong>Tipo transacción:</strong> ${solicitud.tipoTransaccion}</p>
-            <p><strong>Monto:</strong> $${solicitud.monto || '0'}</p>
-            <p><strong>Departamento:</strong> ${solicitud.departamento || '-'}</p>
-            <p><strong>Estado:</strong> ${solicitud.status}</p>
-            <p><strong>Asignado a:</strong> ${solicitud.asignadoA || 'Sin asignar'}</p>
-            <p><strong>Comentario/Respuesta:</strong> ${solicitud.comentarioRespuesta || 'Sin respuesta aún'}</p>
-            <p><strong>Creada:</strong> ${solicitud.fechaCreacion}</p>
-        `;
-        document.getElementById('detalleBody').innerHTML = detalle;
-        document.getElementById('respuestaComentario').value = solicitud.comentarioRespuesta || '';
-        document.getElementById('modalDetalle').style.display = 'flex';
+        document.getElementById('respuestaId').innerText = `Solicitud: ${solicitud.solicitud} - ${solicitud.persona}`;
+        document.getElementById('respuestaTexto').value = solicitud.respuesta || '';
+        document.getElementById('respuestaEstado').value = solicitud.status;
+        document.getElementById('modalRespuesta').style.display = 'flex';
     }
 
     function guardarRespuesta() {
-        if (solicitudActualId) {
-            const solicitud = solicitudes.find(s => s.id === solicitudActualId);
+        if (solicitudEnRespuesta) {
+            const solicitud = solicitudes.find(s => s.id === solicitudEnRespuesta);
             if (solicitud) {
-                solicitud.comentarioRespuesta = document.getElementById('respuestaComentario').value;
-                guardarEnLocal();
-                alert('✅ Respuesta guardada');
+                solicitud.respuesta = document.getElementById('respuestaTexto').value;
+                solicitud.status = document.getElementById('respuestaEstado').value;
+                solicitud.fechaRespuesta = new Date().toLocaleString();
+                guardarDatos();
+                mostrarNotificacion('💬 Respuesta guardada');
                 cerrarModal();
             }
         }
     }
 
     function cerrarModal() {
-        document.getElementById('modalDetalle').style.display = 'none';
-        solicitudActualId = null;
+        document.getElementById('modalRespuesta').style.display = 'none';
+        solicitudEnRespuesta = null;
     }
 
-    function renderTabla() {
-        const busqueda = document.getElementById('buscar').value.toLowerCase();
-        const filtroEstado = document.getElementById('filtroEstado').value;
-        let filtradas = solicitudes.filter(s => {
-            const matchBusqueda = s.solicitud.toLowerCase().includes(busqueda) || 
-                                  s.persona.toLowerCase().includes(busqueda) ||
-                                  (s.dot || '').toLowerCase().includes(busqueda);
-            const matchEstado = filtroEstado === '' || s.status === filtroEstado;
-            return matchBusqueda && matchEstado;
-        });
-        const tbody = document.getElementById('tbodySolicitudes');
-        tbody.innerHTML = '';
-        filtradas.forEach(s => {
-            const estadoClass = {
-                'Pendiente': 'estado-pendiente',
-                'En proceso': 'estado-proceso',
-                'Completado': 'estado-completado',
-                'Rechazado': 'estado-rechazado'
-            }[s.status] || 'estado-pendiente';
-            const row = tbody.insertRow();
-            row.innerHTML = `
-                <td>${s.solicitud}</td>
-                <td>${s.persona}</td>
-                <td>${s.fecha}</td>
-                <td>${s.dot || '-'}</td>
-                <td>$${s.monto || '0'}</td>
-                <td><span class="estado ${estadoClass}">${s.status}</span></td>
-                <td>${s.asignadoA || '—'}</td>
-                <td class="acciones">
-                    <button class="btn-sm" onclick="verDetalle(${s.id})">👁️ Ver</button>
-                    ${s.status === 'Pendiente' ? `<button class="btn-sm btn-success" onclick="tomarSolicitud(${s.id})">📌 Tomar</button>` : ''}
-                    ${s.status === 'En proceso' ? `<button class="btn-sm btn-warning" onclick="cambiarEstado(${s.id}, 'Completado')">✅ Completar</button>` : ''}
-                    <select onchange="cambiarEstado(${s.id}, this.value)" style="width:110px;padding:4px;">
-                        <option value="">Cambiar estado</option>
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="En proceso">En proceso</option>
-                        <option value="Completado">Completado</option>
-                        <option value="Rechazado">Rechazado</option>
-                    </select>
-                </td>
-            `;
-        });
-    }
-
-    function exportarExcel() {
-        if (solicitudes.length === 0) {
-            alert('No hay datos para exportar');
+    function crearSolicitud() {
+        const id = document.getElementById('nuevoId').value.trim();
+        const persona = document.getElementById('nuevoPersona').value.trim();
+        if (!id && !persona) {
+            mostrarNotificacion('❌ Completa al menos ID o nombre', 'error');
             return;
         }
-        const headers = ['ID', 'Solicitud', 'Persona', 'Fecha', 'Email', 'Explicación', 'DOT', 'Caso', 'Tipo Transacción', 'Monto', 'Departamento', 'Estado', 'Asignado A', 'Comentario Respuesta', 'Fecha Creación'];
-        let csvRows = [headers.join(',')];
-        for (const s of solicitudes) {
-            const row = [
-                s.id,
-                `"${s.solicitud}"`,
-                `"${s.persona}"`,
-                s.fecha,
-                s.email || '',
-                `"${(s.explicacion || '').replace(/"/g, '""')}"`,
-                s.dot || '',
-                s.caso || '',
-                s.tipoTransaccion || '',
-                s.monto || '',
-                s.departamento || '',
-                s.status,
-                `"${s.asignadoA || ''}"`,
-                `"${(s.comentarioRespuesta || '').replace(/"/g, '""')}"`,
-                s.fechaCreacion
-            ];
-            csvRows.push(row.join(','));
-        }
-        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-        link.setAttribute('download', `solicitudes_completas_${new Date().toISOString().slice(0,19)}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        const nueva = {
+            id: Date.now(),
+            solicitud: id || `SOL-${Date.now()}`,
+            persona: persona,
+            email: document.getElementById('nuevoEmail').value,
+            dot: document.getElementById('nuevoDot').value,
+            tipo: document.getElementById('nuevoTipo').value,
+            monto: document.getElementById('nuevoMonto').value,
+            departamento: document.getElementById('nuevoDepto').value,
+            explicacion: document.getElementById('nuevoExplicacion').value,
+            status: 'Pendiente',
+            asignadoA: null,
+            respuesta: '',
+            fechaCreacion: new Date().toLocaleString()
+        };
+        solicitudes.unshift(nueva);
+        guardarDatos();
+        document.getElementById('tabNueva').querySelectorAll('input, textarea, select').forEach(el => el.value = '');
+        document.getElementById('nuevoPersona').value = '';
+        document.getElementById('nuevoId').value = '';
+        mostrarNotificacion('✅ Solicitud creada');
+        document.querySelector('[data-tab="pendientes"]').click();
     }
 
-    window.onclick = function(event) {
-        const modal = document.getElementById('modalDetalle');
-        if (event.target === modal) cerrarModal();
-    };
+    function renderTablas() {
+        // Pendientes
+        const pendientes = solicitudes.filter(s => s.status === 'Pendiente' && !s.asignadoA);
+        const busqPend = document.getElementById('buscarPendientes')?.value.toLowerCase() || '';
+        const filtPend = pendientes.filter(s => s.solicitud.toLowerCase().includes(busqPend) || s.persona.toLowerCase().includes(busqPend));
+        document.getElementById('tbodyPendientes').innerHTML = filtPend.map(s => `
+            <tr>
+                <td>${s.solicitud}</td><td>${s.persona}</td><td>${s.dot || '-'}</td><td>$${s.monto || '0'}</td>
+                <td>${s.explicacion?.substring(0, 50) || '-'}</td>
+                <td><button class="btn-sm btn-tomar" onclick="tomarSolicitud(${s.id})">📌 Tomar</button></td>
+            </tr>
+        `).join('') || '<tr><td colspan="6">✨ No hay solicitudes pendientes</td></tr>';
+
+        // Mis solicitudes
+        const misTareas = solicitudes.filter(s => s.asignadoA === usuarioActual && s.status !== 'Completado');
+        const busqMis = document.getElementById('buscarMisSolicitudes')?.value.toLowerCase() || '';
+        const filtMis = misTareas.filter(s => s.solicitud.toLowerCase().includes(busqMis) || s.persona.toLowerCase().includes(busqMis));
+        document.getElementById('tbodyMisSolicitudes').innerHTML = filtMis.map(s => `
+            <tr>
+                <td>${s.solicitud}</td><td>${s.persona}</td><td>${s.dot || '-'}</td>
+                <td><span class="estado estado-proceso">${s.status}</span></td>
+                <td>${s.respuesta?.substring(0, 40) || 'Sin respuesta'}</td>
+                <td><button class="btn-sm" onclick="abrirRespuesta(${s.id})">💬 Responder</button></td>
+            </tr>
+        `).join('') || '<tr><td colspan="6">📭 No tienes solicitudes asignadas</td></tr>';
+
+        // Todas
+        const busqTodas = document.getElementById('buscarTodas')?.value.toLowerCase() || '';
+        const filtTodas = solicitudes.filter(s => s.solicitud.toLowerCase().includes(busqTodas) || s.persona.toLowerCase().includes(busqTodas));
+        document.getElementById('tbodyTodas').innerHTML = filtTodas.map(s => `
+            <tr>
+                <td>${s.solicitud}</td><td>${s.persona}</td><td>${s.asignadoA || '—'}</td>
+                <td><span class="estado ${s.status === 'Pendiente' ? 'estado-pendiente' : (s.status === 'Completado' ? 'estado-completado' : 'estado-proceso')}">${s.status}</span></td>
+                <td>${s.fechaCreacion?.split(',')[0] || '-'}</td>
+                <td><button class="btn-sm" onclick="abrirRespuesta(${s.id})">👁️ Ver/Responder</button></td>
+            </tr>
+        `).join('') || '<tr><td colspan="6">📭 No hay solicitudes</td></tr>';
+    }
+
+    function mostrarNotificacion(msg, tipo = 'ok') {
+        const notif = document.createElement('div');
+        notif.className = 'notificacion';
+        notif.style.background = tipo === 'error' ? '#ef4444' : '#10b981';
+        notif.innerText = msg;
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 3000);
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark');
+    }
+
+    // Sistema de pestañas
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const tab = btn.dataset.tab;
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            if (tab === 'pendientes') document.getElementById('tabPendientes').style.display = 'block';
+            if (tab === 'misSolicitudes') document.getElementById('tabMisSolicitudes').style.display = 'block';
+            if (tab === 'todas') document.getElementById('tabTodas').style.display = 'block';
+            if (tab === 'nueva') document.getElementById('tabNueva').style.display = 'block';
+            renderTablas();
+        });
+    });
 
     cargarDatos();
+
+    window.onclick = (e) => { if (e.target === document.getElementById('modalRespuesta')) cerrarModal(); };
 </script>
 </body>
 </html>
