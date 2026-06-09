@@ -3,69 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Solicitudes - Gestión en Equipo</title>
+    <title>Sistema de Solicitudes - Con envío de correos</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f1f5f9;
+            background: #f0f2f5;
             padding: 20px;
-            transition: 0.3s;
         }
-
-        body.dark {
-            background: #0f172a;
-            color: #e2e8f0;
-        }
-
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        h1 {
-            color: #1e3a8a;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        body.dark h1 {
-            color: #60a5fa;
-        }
-
-        .theme-btn {
-            background: #334155;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-        }
-
-        /* Tarjetas de estadísticas */
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; }
+        h1 { color: #1a73e8; }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
             margin-bottom: 24px;
         }
-
         .stat-card {
             background: white;
             border-radius: 16px;
@@ -73,25 +28,13 @@
             text-align: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-
-        body.dark .stat-card {
-            background: #1e293b;
-        }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #2563eb;
-        }
-
-        /* Pestañas */
+        .stat-number { font-size: 28px; font-weight: bold; color: #1a73e8; }
         .tabs {
             display: flex;
             gap: 8px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-
         .tab-btn {
             background: #e2e8f0;
             border: none;
@@ -99,20 +42,8 @@
             border-radius: 30px;
             cursor: pointer;
             font-weight: 600;
-            transition: 0.2s;
         }
-
-        body.dark .tab-btn {
-            background: #334155;
-            color: #e2e8f0;
-        }
-
-        .tab-btn.active {
-            background: #2563eb;
-            color: white;
-        }
-
-        /* Panel de formulario */
+        .tab-btn.active { background: #1a73e8; color: white; }
         .form-panel {
             background: white;
             border-radius: 20px;
@@ -120,72 +51,33 @@
             margin-bottom: 24px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-
-        body.dark .form-panel {
-            background: #1e293b;
-        }
-
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 16px;
         }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        label {
-            font-weight: 600;
-            font-size: 13px;
-            color: #475569;
-        }
-
-        body.dark label {
-            color: #94a3b8;
-        }
-
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        label { font-weight: 600; font-size: 13px; color: #475569; }
         input, select, textarea {
             padding: 10px 12px;
             border: 1px solid #cbd5e1;
             border-radius: 12px;
             font-size: 14px;
-            background: white;
         }
-
-        body.dark input, body.dark select, body.dark textarea {
-            background: #0f172a;
-            border-color: #334155;
-            color: #e2e8f0;
-        }
-
         button {
-            background: #2563eb;
+            background: #1a73e8;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
-            transition: 0.2s;
+            margin-top: 16px;
         }
-
-        button:hover {
-            background: #1d4ed8;
-            transform: scale(1.02);
-        }
-
-        .btn-secondary {
-            background: #64748b;
-        }
-
-        /* Tabla */
+        button:hover { background: #1557b0; }
+        .btn-secondary { background: #64748b; }
+        .btn-success { background: #10b981; }
         .table-wrapper {
             overflow-x: auto;
             background: white;
@@ -193,35 +85,9 @@
             padding: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-
-        body.dark .table-wrapper {
-            background: #1e293b;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        body.dark th, body.dark td {
-            border-bottom-color: #334155;
-        }
-
-        th {
-            background: #f8fafc;
-            font-weight: 600;
-        }
-
-        body.dark th {
-            background: #0f172a;
-        }
-
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; }
         .estado {
             display: inline-block;
             padding: 4px 12px;
@@ -229,63 +95,31 @@
             font-size: 12px;
             font-weight: 600;
         }
-
         .estado-pendiente { background: #fef3c7; color: #b45309; }
         .estado-proceso { background: #dbeafe; color: #1e40af; }
         .estado-completado { background: #dcfce7; color: #166534; }
-
-        body.dark .estado-pendiente { background: #78350f; color: #fde68a; }
-        body.dark .estado-proceso { background: #1e3a8a; color: #93c5fd; }
-        body.dark .estado-completado { background: #14532d; color: #86efac; }
-
-        .acciones {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .btn-sm {
-            padding: 5px 12px;
-            font-size: 12px;
-        }
-
-        .btn-tomar {
-            background: #10b981;
-        }
-
-        .btn-tomar:hover {
-            background: #059669;
-        }
-
+        .acciones { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-sm { padding: 5px 12px; font-size: 12px; margin-top: 0; }
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(0,0,0,0.5);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
-
         .modal-content {
             background: white;
             border-radius: 24px;
             padding: 24px;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
         }
-
-        body.dark .modal-content {
-            background: #1e293b;
-        }
-
         .notificacion {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 20px; right: 20px;
             background: #10b981;
             color: white;
             padding: 12px 20px;
@@ -293,277 +127,295 @@
             z-index: 1000;
             animation: slideIn 0.3s ease;
         }
-
+        .notificacion.error { background: #ef4444; }
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h1>📋 Panel de Solicitudes - Gestión en Equipo</h1>
-        <button class="theme-btn" onclick="toggleTheme()">🌓 Modo oscuro/claro</button>
+        <h1>📋 Sistema de Gestión de Solicitudes</h1>
     </div>
 
-    <!-- Estadísticas -->
     <div class="stats-grid" id="statsGrid"></div>
 
-    <!-- Pestañas -->
     <div class="tabs">
-        <button class="tab-btn active" data-tab="pendientes">⏳ Pendientes (nadie las ha tomado)</button>
-        <button class="tab-btn" data-tab="misSolicitudes">👤 Mis solicitudes asignadas</button>
-        <button class="tab-btn" data-tab="todas">📋 Todas las solicitudes</button>
-        <button class="tab-btn" data-tab="nueva">➕ Nueva solicitud</button>
+        <button class="tab-btn active" data-tab="nueva">📝 Nueva Solicitud</button>
+        <button class="tab-btn" data-tab="pendientes">⏳ Pendientes</button>
+        <button class="tab-btn" data-tab="misTareas">👤 Mis Tareas</button>
+        <button class="tab-btn" data-tab="todas">📋 Todas</button>
     </div>
 
-    <!-- Contenido de pestañas -->
-    <div id="tabPendientes" class="tab-content">
+    <!-- Pestaña: Nueva Solicitud -->
+    <div id="tabNueva" class="tab-content">
+        <div class="form-panel">
+            <h2>📝 Formulario de Solicitud</h2>
+            <div class="form-grid">
+                <div class="form-group"><label>Fecha de solicitud *</label><input type="date" id="fechaSolicitud"></div>
+                <div class="form-group"><label>DOT *</label><input type="text" id="dot" placeholder="Número DOT"></div>
+                <div class="form-group"><label>Número de caso *</label><input type="text" id="numCaso" placeholder="Número de caso"></div>
+                <div class="form-group"><label>Subject (en caso de aplicar)</label><input type="text" id="subject" placeholder="Asunto"></div>
+                <div class="form-group"><label>Adjuntar imagen/soporte (nombre del archivo)</label><input type="text" id="adjunto" placeholder="Nombre del archivo adjunto"></div>
+                <div class="form-group"><label>Especificar tipo de transacción *</label><input type="text" id="tipoTransaccion" placeholder="Ej: Transferencia, Pago proveedor"></div>
+                <div class="form-group"><label>Fecha de la transacción *</label><input type="date" id="fechaTransaccion"></div>
+                <div class="form-group"><label>Departamento que solicita *</label><input type="text" id="departamento" placeholder="Departamento"></div>
+                <div class="form-group"><label>Email Address *</label><input type="email" id="emailSolicitante" placeholder="correo@ejemplo.com"></div>
+                <div class="form-group"><label>Tipo de solicitud *</label><select id="tipoSolicitud"><option>Compra</option><option>Reembolso</option><option>Pago factura</option><option>Contratación</option></select></div>
+                <div class="form-group"><label>Monto de la transacción *</label><input type="number" id="montoTransaccion" step="0.01" placeholder="0.00"></div>
+                <div class="form-group"><label>Número de Caso en P&S</label><input type="text" id="casoPS" placeholder="Número P&S"></div>
+                <div class="form-group full-width"><label>Explicación detallada de lo que se solicita *</label><textarea id="explicacionDetallada" rows="3" placeholder="Describa con el mayor detalle posible..."></textarea></div>
+                <div class="form-group"><label>Número de transacción</label><input type="text" id="numTransaccion" placeholder="Número de transacción"></div>
+                <div class="form-group"><label>Fecha de la transacción (banco)</label><input type="date" id="fechaTransaccionBanco"></div>
+                <div class="form-group"><label>Monto de la transacción (banco)</label><input type="number" id="montoTransaccionBanco" step="0.01"></div>
+                <div class="form-group full-width"><label>Descripción de la transacción reflejada en el banco</label><textarea id="descripcionBanco" rows="2" placeholder="Descripción..."></textarea></div>
+                <div class="form-group"><label>Tiempo de respuesta requerido *</label><select id="tiempoRespuesta"><option>Inmediato (< 2h)</option><option>Mismo día</option><option>24 horas</option><option>48 horas</option><option>3 días hábiles</option></select></div>
+            </div>
+            <button onclick="crearSolicitud()">🚀 Enviar Solicitud</button>
+        </div>
+    </div>
+
+    <!-- Pestaña: Pendientes -->
+    <div id="tabPendientes" class="tab-content" style="display:none;">
         <div class="table-wrapper">
             <input type="text" id="buscarPendientes" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
-            <table>
-                <thead><tr><th>ID</th><th>Solicitante</th><th>DOT</th><th>Monto</th><th>Explicación</th><th>Acciones</th></tr></thead>
-                <tbody id="tbodyPendientes"></tbody>
-            </table>
+            <table><thead><tr><th>ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Tipo</th><th>Monto</th><th>Tiempo Respuesta</th><th>Acciones</th></tr></thead><tbody id="tbodyPendientes"></tbody></table>
         </div>
     </div>
 
-    <div id="tabMisSolicitudes" class="tab-content" style="display:none;">
+    <!-- Pestaña: Mis Tareas -->
+    <div id="tabMisTareas" class="tab-content" style="display:none;">
         <div class="table-wrapper">
-            <input type="text" id="buscarMisSolicitudes" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
-            <table>
-                <thead><tr><th>ID</th><th>Solicitante</th><th>DOT</th><th>Estado</th><th>Respuesta</th><th>Acciones</th></tr></thead>
-                <tbody id="tbodyMisSolicitudes"></tbody>
-            </table>
+            <input type="text" id="buscarMisTareas" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
+            <table><thead><tr><th>ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tbodyMisTareas"></tbody></table>
         </div>
     </div>
 
+    <!-- Pestaña: Todas -->
     <div id="tabTodas" class="tab-content" style="display:none;">
         <div class="table-wrapper">
             <input type="text" id="buscarTodas" placeholder="🔍 Buscar..." style="width:100%; margin-bottom:16px;" onkeyup="renderTablas()">
-            <table>
-                <thead><tr><th>ID</th><th>Solicitante</th><th>Asignada a</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
-                <tbody id="tbodyTodas"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="tabNueva" class="tab-content" style="display:none;">
-        <div class="form-panel">
-            <h3>➕ Crear nueva solicitud</h3>
-            <div class="form-grid">
-                <div class="form-group"><label>Solicitud ID *</label><input type="text" id="nuevoId" placeholder="Ej: SOL-001"></div>
-                <div class="form-group"><label>Persona que solicita *</label><input type="text" id="nuevoPersona" placeholder="Nombre"></div>
-                <div class="form-group"><label>Email</label><input type="email" id="nuevoEmail"></div>
-                <div class="form-group"><label>DOT</label><input type="text" id="nuevoDot"></div>
-                <div class="form-group"><label>Tipo transacción</label><select id="nuevoTipo"><option>Compra</option><option>Reembolso</option><option>Pago</option></select></div>
-                <div class="form-group"><label>Monto</label><input type="number" id="nuevoMonto" step="0.01"></div>
-                <div class="form-group"><label>Departamento</label><input type="text" id="nuevoDepto"></div>
-                <div class="form-group full-width"><label>Explicación detallada</label><textarea id="nuevoExplicacion" rows="3"></textarea></div>
-            </div>
-            <button onclick="crearSolicitud()">📌 Crear solicitud</button>
+            <table><thead><tr><th>ID</th><th>Fecha</th><th>DOT</th><th>Solicitante</th><th>Asignado a</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tbodyTodas"></tbody></table>
         </div>
     </div>
 </div>
 
-<!-- Modal para responder -->
-<div id="modalRespuesta" class="modal">
+<!-- Modal para atender solicitud -->
+<div id="modalAtender" class="modal">
     <div class="modal-content">
-        <h3>💬 Responder solicitud</h3>
-        <p><strong id="respuestaId"></strong></p>
-        <label>Tu respuesta / comentario:</label>
-        <textarea id="respuestaTexto" rows="4" style="width:100%; margin:10px 0;"></textarea>
-        <label>Cambiar estado:</label>
-        <select id="respuestaEstado" style="width:100%; margin-bottom:10px;">
-            <option value="En proceso">En proceso</option>
-            <option value="Completado">Completado</option>
-            <option value="Pendiente">Pendiente</option>
-        </select>
-        <button onclick="guardarRespuesta()">💾 Guardar respuesta</button>
+        <h3>📌 Atender Solicitud</h3>
+        <div id="detalleSolicitud"></div>
+        <hr>
+        <div class="form-group"><label>Solicitud ID</label><input type="text" id="atenderSolicitudId" readonly></div>
+        <div class="form-group"><label>Quien lo atiende *</label><input type="text" id="quienAtiende" placeholder="Tu nombre"></div>
+        <div class="form-group"><label>Status</label><select id="atenderStatus"><option>En proceso</option><option>Completado</option><option>Rechazado</option></select></div>
+        <div class="form-group"><label>COMMENTS</label><textarea id="atenderComments" rows="3" placeholder="Comentarios sobre la gestión..."></textarea></div>
+        <div class="form-group"><label>SUBJECT RESPUESTA</label><input type="text" id="subjectRespuesta" placeholder="Asunto de la respuesta"></div>
+        <button onclick="guardarAtencion()">💾 Guardar y enviar correo al solicitante</button>
         <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
     </div>
 </div>
 
 <script>
-    let solicitudes = [];
-    let usuarioActual = localStorage.getItem('usuarioActual') || prompt('👋 ¿Cómo te llamas? (tu nombre aparecerá al tomar solicitudes)', 'Usuario') || 'Usuario';
-    localStorage.setItem('usuarioActual', usuarioActual);
+    // Configurar EmailJS (REEMPLAZA CON TUS CREDENCIALES)
+    emailjs.init("TU_USER_ID_DE_EMAILJS"); // 👈 DEBES REGISTRARTE EN EMAILJS
 
-    let solicitudEnRespuesta = null;
+    let solicitudes = [];
+    let usuarioActual = localStorage.getItem('usuarioAtiende') || '';
+    let solicitudActual = null;
 
     function cargarDatos() {
-        const stored = localStorage.getItem('solicitudes_equipo');
-        if (stored) {
-            solicitudes = JSON.parse(stored);
-        } else {
-            solicitudes = [];
-        }
+        const stored = localStorage.getItem('solicitudes_completas');
+        if (stored) solicitudes = JSON.parse(stored);
+        else solicitudes = [];
         renderTablas();
         actualizarStats();
     }
 
     function guardarDatos() {
-        localStorage.setItem('solicitudes_equipo', JSON.stringify(solicitudes));
+        localStorage.setItem('solicitudes_completas', JSON.stringify(solicitudes));
         renderTablas();
         actualizarStats();
-        mostrarNotificacion('📁 Datos guardados');
     }
 
     function actualizarStats() {
-        const pendientes = solicitudes.filter(s => s.status === 'Pendiente' && !s.asignadoA).length;
-        const misTareas = solicitudes.filter(s => s.asignadoA === usuarioActual && s.status !== 'Completado').length;
+        const pendientes = solicitudes.filter(s => s.status === 'Pendiente').length;
+        const misTareas = solicitudes.filter(s => s.atendidoPor === usuarioActual && s.status !== 'Completado').length;
         const total = solicitudes.length;
         document.getElementById('statsGrid').innerHTML = `
-            <div class="stat-card">📋 Total solicitudes: <div class="stat-number">${total}</div></div>
-            <div class="stat-card">⏳ Pendientes por tomar: <div class="stat-number">${pendientes}</div></div>
-            <div class="stat-card">👤 Mis tareas activas: <div class="stat-number">${misTareas}</div></div>
+            <div class="stat-card">📋 Total: <div class="stat-number">${total}</div></div>
+            <div class="stat-card">⏳ Pendientes: <div class="stat-number">${pendientes}</div></div>
+            <div class="stat-card">👤 Mis tareas: <div class="stat-number">${misTareas}</div></div>
             <div class="stat-card">✅ Completadas: <div class="stat-number">${solicitudes.filter(s => s.status === 'Completado').length}</div></div>
         `;
     }
 
-    function tomarSolicitud(id) {
-        const solicitud = solicitudes.find(s => s.id === id);
-        if (solicitud && solicitud.status === 'Pendiente' && !solicitud.asignadoA) {
-            solicitud.asignadoA = usuarioActual;
-            solicitud.status = 'En proceso';
-            solicitud.fechaAsignacion = new Date().toLocaleString();
-            guardarDatos();
-            mostrarNotificacion(`✅ Tomaste la solicitud ${solicitud.solicitud}`);
-        } else {
-            mostrarNotificacion('⚠️ Esta solicitud ya fue tomada', 'error');
-        }
-    }
-
-    function abrirRespuesta(id) {
-        solicitudEnRespuesta = id;
-        const solicitud = solicitudes.find(s => s.id === id);
-        document.getElementById('respuestaId').innerText = `Solicitud: ${solicitud.solicitud} - ${solicitud.persona}`;
-        document.getElementById('respuestaTexto').value = solicitud.respuesta || '';
-        document.getElementById('respuestaEstado').value = solicitud.status;
-        document.getElementById('modalRespuesta').style.display = 'flex';
-    }
-
-    function guardarRespuesta() {
-        if (solicitudEnRespuesta) {
-            const solicitud = solicitudes.find(s => s.id === solicitudEnRespuesta);
-            if (solicitud) {
-                solicitud.respuesta = document.getElementById('respuestaTexto').value;
-                solicitud.status = document.getElementById('respuestaEstado').value;
-                solicitud.fechaRespuesta = new Date().toLocaleString();
-                guardarDatos();
-                mostrarNotificacion('💬 Respuesta guardada');
-                cerrarModal();
-            }
-        }
-    }
-
-    function cerrarModal() {
-        document.getElementById('modalRespuesta').style.display = 'none';
-        solicitudEnRespuesta = null;
-    }
-
     function crearSolicitud() {
-        const id = document.getElementById('nuevoId').value.trim();
-        const persona = document.getElementById('nuevoPersona').value.trim();
-        if (!id && !persona) {
-            mostrarNotificacion('❌ Completa al menos ID o nombre', 'error');
-            return;
-        }
+        const email = document.getElementById('emailSolicitante').value;
+        if (!email) { mostrarNotificacion('❌ El email es obligatorio', true); return; }
+        
         const nueva = {
             id: Date.now(),
-            solicitud: id || `SOL-${Date.now()}`,
-            persona: persona,
-            email: document.getElementById('nuevoEmail').value,
-            dot: document.getElementById('nuevoDot').value,
-            tipo: document.getElementById('nuevoTipo').value,
-            monto: document.getElementById('nuevoMonto').value,
-            departamento: document.getElementById('nuevoDepto').value,
-            explicacion: document.getElementById('nuevoExplicacion').value,
+            solicitudId: `SOL-${Date.now()}`,
+            fechaSolicitud: document.getElementById('fechaSolicitud').value || new Date().toISOString().slice(0,10),
+            dot: document.getElementById('dot').value,
+            numCaso: document.getElementById('numCaso').value,
+            subject: document.getElementById('subject').value,
+            adjunto: document.getElementById('adjunto').value,
+            tipoTransaccion: document.getElementById('tipoTransaccion').value,
+            fechaTransaccion: document.getElementById('fechaTransaccion').value,
+            departamento: document.getElementById('departamento').value,
+            emailSolicitante: email,
+            tipoSolicitud: document.getElementById('tipoSolicitud').value,
+            montoTransaccion: document.getElementById('montoTransaccion').value,
+            casoPS: document.getElementById('casoPS').value,
+            explicacionDetallada: document.getElementById('explicacionDetallada').value,
+            numTransaccion: document.getElementById('numTransaccion').value,
+            fechaTransaccionBanco: document.getElementById('fechaTransaccionBanco').value,
+            montoTransaccionBanco: document.getElementById('montoTransaccionBanco').value,
+            descripcionBanco: document.getElementById('descripcionBanco').value,
+            tiempoRespuesta: document.getElementById('tiempoRespuesta').value,
             status: 'Pendiente',
-            asignadoA: null,
-            respuesta: '',
+            atendidoPor: '',
+            comments: '',
+            subjectRespuesta: '',
             fechaCreacion: new Date().toLocaleString()
         };
         solicitudes.unshift(nueva);
         guardarDatos();
-        document.getElementById('tabNueva').querySelectorAll('input, textarea, select').forEach(el => el.value = '');
-        document.getElementById('nuevoPersona').value = '';
-        document.getElementById('nuevoId').value = '';
         mostrarNotificacion('✅ Solicitud creada');
-        document.querySelector('[data-tab="pendientes"]').click();
+        document.querySelectorAll('#tabNueva input, #tabNueva select, #tabNueva textarea').forEach(el => el.value = '');
+        document.getElementById('fechaSolicitud').valueAsDate = new Date();
+    }
+
+    function abrirAtender(id) {
+        solicitudActual = solicitudes.find(s => s.id === id);
+        if (!solicitudActual) return;
+        document.getElementById('atenderSolicitudId').value = solicitudActual.solicitudId;
+        document.getElementById('quienAtiende').value = solicitudActual.atendidoPor || '';
+        document.getElementById('atenderStatus').value = solicitudActual.status === 'Pendiente' ? 'En proceso' : solicitudActual.status;
+        document.getElementById('atenderComments').value = solicitudActual.comments || '';
+        document.getElementById('subjectRespuesta').value = solicitudActual.subjectRespuesta || '';
+        
+        const detalle = `
+            <p><strong>Solicitante:</strong> ${solicitudActual.emailSolicitante}</p>
+            <p><strong>DOT:</strong> ${solicitudActual.dot}</p>
+            <p><strong>Explicación:</strong> ${solicitudActual.explicacionDetallada?.substring(0,100)}</p>
+            <p><strong>Tiempo requerido:</strong> ${solicitudActual.tiempoRespuesta}</p>
+        `;
+        document.getElementById('detalleSolicitud').innerHTML = detalle;
+        document.getElementById('modalAtender').style.display = 'flex';
+    }
+
+    async function guardarAtencion() {
+        if (!solicitudActual) return;
+        const quien = document.getElementById('quienAtiende').value;
+        if (!quien) { mostrarNotificacion('❌ Ingresa quién atiende', true); return; }
+        
+        usuarioActual = quien;
+        localStorage.setItem('usuarioAtiende', usuarioActual);
+        
+        solicitudActual.atendidoPor = quien;
+        solicitudActual.status = document.getElementById('atenderStatus').value;
+        solicitudActual.comments = document.getElementById('atenderComments').value;
+        solicitudActual.subjectRespuesta = document.getElementById('subjectRespuesta').value;
+        solicitudActual.fechaRespuesta = new Date().toLocaleString();
+        
+        guardarDatos();
+        
+        // Enviar correo al solicitante
+        await enviarCorreo(solicitudActual);
+        
+        cerrarModal();
+        mostrarNotificacion('✅ Solicitud actualizada y correo enviado');
+    }
+
+    async function enviarCorreo(solicitud) {
+        // Configuración EmailJS (necesitas crear cuenta en emailjs.com)
+        const templateParams = {
+            to_email: solicitud.emailSolicitante,
+            subject_respuesta: solicitud.subjectRespuesta || 'Actualización de tu solicitud',
+            comments: solicitud.comments,
+            status: solicitud.status,
+            solicitud_id: solicitud.solicitudId,
+            dot: solicitud.dot
+        };
+        
+        try {
+            await emailjs.send('TU_SERVICE_ID', 'TU_TEMPLATE_ID', templateParams);
+            console.log('Correo enviado');
+        } catch (error) {
+            console.error('Error al enviar correo:', error);
+            mostrarNotificacion('⚠️ Solicitud guardada pero no se pudo enviar el correo', true);
+        }
     }
 
     function renderTablas() {
         // Pendientes
-        const pendientes = solicitudes.filter(s => s.status === 'Pendiente' && !s.asignadoA);
+        const pendientes = solicitudes.filter(s => s.status === 'Pendiente');
         const busqPend = document.getElementById('buscarPendientes')?.value.toLowerCase() || '';
-        const filtPend = pendientes.filter(s => s.solicitud.toLowerCase().includes(busqPend) || s.persona.toLowerCase().includes(busqPend));
+        const filtPend = pendientes.filter(s => s.solicitudId.toLowerCase().includes(busqPend) || s.dot.toLowerCase().includes(busqPend));
         document.getElementById('tbodyPendientes').innerHTML = filtPend.map(s => `
-            <tr>
-                <td>${s.solicitud}</td><td>${s.persona}</td><td>${s.dot || '-'}</td><td>$${s.monto || '0'}</td>
-                <td>${s.explicacion?.substring(0, 50) || '-'}</td>
-                <td><button class="btn-sm btn-tomar" onclick="tomarSolicitud(${s.id})">📌 Tomar</button></td>
-            </tr>
-        `).join('') || '<tr><td colspan="6">✨ No hay solicitudes pendientes</td></tr>';
-
-        // Mis solicitudes
-        const misTareas = solicitudes.filter(s => s.asignadoA === usuarioActual && s.status !== 'Completado');
-        const busqMis = document.getElementById('buscarMisSolicitudes')?.value.toLowerCase() || '';
-        const filtMis = misTareas.filter(s => s.solicitud.toLowerCase().includes(busqMis) || s.persona.toLowerCase().includes(busqMis));
-        document.getElementById('tbodyMisSolicitudes').innerHTML = filtMis.map(s => `
-            <tr>
-                <td>${s.solicitud}</td><td>${s.persona}</td><td>${s.dot || '-'}</td>
-                <td><span class="estado estado-proceso">${s.status}</span></td>
-                <td>${s.respuesta?.substring(0, 40) || 'Sin respuesta'}</td>
-                <td><button class="btn-sm" onclick="abrirRespuesta(${s.id})">💬 Responder</button></td>
-            </tr>
-        `).join('') || '<tr><td colspan="6">📭 No tienes solicitudes asignadas</td></tr>';
-
+            <tr><td>${s.solicitudId}</td><td>${s.fechaSolicitud}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td><td>${s.tipoSolicitud}</td><td>$${s.montoTransaccion}</td><td>${s.tiempoRespuesta}</td>
+            <td><button class="btn-sm" onclick="abrirAtender(${s.id})">📌 Atender</button></td></tr>
+        `).join('') || '<tr><td colspan="8">✨ No hay solicitudes pendientes</td></tr>';
+        
+        // Mis Tareas
+        const misTareas = solicitudes.filter(s => s.atendidoPor === usuarioActual && s.status !== 'Completado');
+        const busqMis = document.getElementById('buscarMisTareas')?.value.toLowerCase() || '';
+        const filtMis = misTareas.filter(s => s.solicitudId.toLowerCase().includes(busqMis));
+        document.getElementById('tbodyMisTareas').innerHTML = filtMis.map(s => `
+            <tr><td>${s.solicitudId}</td><td>${s.fechaSolicitud}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td>
+            <td><span class="estado estado-proceso">${s.status}</span></td>
+            <td><button class="btn-sm" onclick="abrirAtender(${s.id})">✏️ Editar</button></td></tr>
+        `).join('') || '<tr><td colspan="6">📭 No tienes tareas asignadas</td></tr>';
+        
         // Todas
         const busqTodas = document.getElementById('buscarTodas')?.value.toLowerCase() || '';
-        const filtTodas = solicitudes.filter(s => s.solicitud.toLowerCase().includes(busqTodas) || s.persona.toLowerCase().includes(busqTodas));
+        const filtTodas = solicitudes.filter(s => s.solicitudId.toLowerCase().includes(busqTodas));
         document.getElementById('tbodyTodas').innerHTML = filtTodas.map(s => `
-            <tr>
-                <td>${s.solicitud}</td><td>${s.persona}</td><td>${s.asignadoA || '—'}</td>
-                <td><span class="estado ${s.status === 'Pendiente' ? 'estado-pendiente' : (s.status === 'Completado' ? 'estado-completado' : 'estado-proceso')}">${s.status}</span></td>
-                <td>${s.fechaCreacion?.split(',')[0] || '-'}</td>
-                <td><button class="btn-sm" onclick="abrirRespuesta(${s.id})">👁️ Ver/Responder</button></td>
-            </tr>
-        `).join('') || '<tr><td colspan="6">📭 No hay solicitudes</td></tr>';
+            <tr><td>${s.solicitudId}</td><td>${s.fechaSolicitud}</td><td>${s.dot}</td><td>${s.emailSolicitante}</td>
+            <td>${s.atendidoPor || '—'}</td>
+            <td><span class="estado ${s.status === 'Pendiente' ? 'estado-pendiente' : (s.status === 'Completado' ? 'estado-completado' : 'estado-proceso')}">${s.status}</span></td>
+            <td><button class="btn-sm" onclick="abrirAtender(${s.id})">👁️ Ver</button></td></tr>
+        `).join('') || '<tr><td colspan="7">📭 No hay solicitudes</td></tr>';
     }
 
-    function mostrarNotificacion(msg, tipo = 'ok') {
+    function mostrarNotificacion(msg, error = false) {
         const notif = document.createElement('div');
         notif.className = 'notificacion';
-        notif.style.background = tipo === 'error' ? '#ef4444' : '#10b981';
+        if (error) notif.classList.add('error');
         notif.innerText = msg;
         document.body.appendChild(notif);
         setTimeout(() => notif.remove(), 3000);
     }
 
-    function toggleTheme() {
-        document.body.classList.toggle('dark');
+    function cerrarModal() {
+        document.getElementById('modalAtender').style.display = 'none';
+        solicitudActual = null;
     }
 
-    // Sistema de pestañas
+    // Pestañas
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const tab = btn.dataset.tab;
             document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-            if (tab === 'pendientes') document.getElementById('tabPendientes').style.display = 'block';
-            if (tab === 'misSolicitudes') document.getElementById('tabMisSolicitudes').style.display = 'block';
-            if (tab === 'todas') document.getElementById('tabTodas').style.display = 'block';
             if (tab === 'nueva') document.getElementById('tabNueva').style.display = 'block';
+            if (tab === 'pendientes') document.getElementById('tabPendientes').style.display = 'block';
+            if (tab === 'misTareas') document.getElementById('tabMisTareas').style.display = 'block';
+            if (tab === 'todas') document.getElementById('tabTodas').style.display = 'block';
             renderTablas();
         });
     });
-
+    
+    document.getElementById('fechaSolicitud').valueAsDate = new Date();
     cargarDatos();
-
-    window.onclick = (e) => { if (e.target === document.getElementById('modalRespuesta')) cerrarModal(); };
+    window.onclick = (e) => { if (e.target === document.getElementById('modalAtender')) cerrarModal(); };
 </script>
 </body>
 </html>
